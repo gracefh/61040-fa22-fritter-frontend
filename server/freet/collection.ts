@@ -1,7 +1,8 @@
-import type {HydratedDocument, Types} from 'mongoose';
-import type {Freet} from './model';
+import type { HydratedDocument, Types } from 'mongoose';
+import type { Freet } from './model';
 import FreetModel from './model';
 import UserCollection from '../user/collection';
+import GroupCollection from '../group/collection';
 
 /**
  * This files contains a class that has the functionality to explore freets
@@ -38,7 +39,7 @@ class FreetCollection {
    * @return {Promise<HydratedDocument<Freet>> | Promise<null> } - The freet with the given freetId, if any
    */
   static async findOne(freetId: Types.ObjectId | string): Promise<HydratedDocument<Freet>> {
-    return FreetModel.findOne({_id: freetId}).populate('authorId');
+    return FreetModel.findOne({ _id: freetId }).populate('authorId');
   }
 
   /**
@@ -48,7 +49,7 @@ class FreetCollection {
    */
   static async findAll(): Promise<Array<HydratedDocument<Freet>>> {
     // Retrieves freets and sorts them from most to least recent
-    return FreetModel.find({}).sort({dateModified: -1}).populate('authorId');
+    return FreetModel.find({}).sort({ dateModified: -1 }).populate('authorId');
   }
 
   /**
@@ -59,7 +60,7 @@ class FreetCollection {
    */
   static async findAllByUsername(username: string): Promise<Array<HydratedDocument<Freet>>> {
     const author = await UserCollection.findOneByUsername(username);
-    return FreetModel.find({authorId: author._id}).sort({dateModified: -1}).populate('authorId');
+    return FreetModel.find({ authorId: author._id }).sort({ dateModified: -1 }).populate('authorId');
   }
 
   /**
@@ -70,7 +71,7 @@ class FreetCollection {
    * @return {Promise<HydratedDocument<Freet>>} - The newly updated freet
    */
   static async updateOne(freetId: Types.ObjectId | string, content: string): Promise<HydratedDocument<Freet>> {
-    const freet = await FreetModel.findOne({_id: freetId});
+    const freet = await FreetModel.findOne({ _id: freetId });
     freet.content = content;
     freet.dateModified = new Date();
     await freet.save();
@@ -84,7 +85,17 @@ class FreetCollection {
    * @return {Promise<Boolean>} - true if the freet has been deleted, false otherwise
    */
   static async deleteOne(freetId: Types.ObjectId | string): Promise<boolean> {
-    const freet = await FreetModel.deleteOne({_id: freetId});
+    const origFreet = await FreetModel.findOne({ _id: freetId });
+    if (origFreet.group !== undefined) {
+      const deletedFromGroup = await GroupCollection.deleteFreet(
+        freetId,
+        origFreet.group
+      );
+      if (!deletedFromGroup) {
+        return false;
+      }
+    }
+    const freet = await FreetModel.deleteOne({ _id: freetId });
     return freet !== null;
   }
 
@@ -94,7 +105,15 @@ class FreetCollection {
    * @param {string} authorId - The id of author of freets
    */
   static async deleteMany(authorId: Types.ObjectId | string): Promise<void> {
-    await FreetModel.deleteMany({authorId});
+    const user = await UserCollection.findOneByUserId(authorId);
+    const freets = await FreetCollection.findAllByUsername(user.username);
+    await Promise.all(
+      freets.map((freet) => {
+        if (freet.group === undefined) return;
+        return GroupCollection.deleteFreet(freet._id, freet.group);
+      })
+    );
+    await FreetModel.deleteMany({ authorId });
   }
 }
 
