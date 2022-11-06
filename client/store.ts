@@ -11,6 +11,7 @@ const store = new Vuex.Store({
   state: {
     filter: null, // Username to filter shown freets by (null = show all)
     freets: [], // All freets created in the app
+    groups: [], // All groups in app
     username: null, // Username of the logged in user
     alerts: {} // global success/error messages encountered during submissions to non-visible forms
   },
@@ -44,6 +45,20 @@ const store = new Vuex.Store({
        * @param freets - Freets to store
        */
       state.freets = freets;
+    }, updateGroups(state, groups) {
+      /**
+       * Update the stored groups to the provided groups.
+       * @param groups - Groups to store
+       */
+      state.groups = groups;
+    },
+    async refreshGroups(state) {
+      /**
+       * Request the server for the currently available freets.
+       */
+      const url = '/api/groups';
+      const res = await fetch(url).then(async r => r.json());
+      state.groups = res;
     },
     async refreshFreets(state) {
       /**
