@@ -1,5 +1,7 @@
 import type {Types} from 'mongoose';
 import {Schema, model} from 'mongoose';
+import { User } from '../user/model';
+import { Freet} from '../freet/model';
 
 /**
  * This file defines the properties stored in a Group
@@ -14,6 +16,17 @@ export type Group = {
   moderators: Array<Types.ObjectId>;
   members: Array<Types.ObjectId>;
   freets: Array<Types.ObjectId>;
+};
+
+// Type definition for Group on the backend
+export type PopulatedGroup = {
+  _id: Types.ObjectId; // MongoDB assigns each object this ID on creation
+  name: string;
+  description: string;
+  owner: User;
+  moderators: Array<User>;
+  members: Array<User>;
+  freets: Array<Freet>;
 };
 
 // Mongoose schema definition for interfacing with a MongoDB table
@@ -33,18 +46,19 @@ const GroupSchema = new Schema({
   // The owner of the group
   owner: {
     type: Schema.Types.ObjectId,
-    required: true
+    required: true,
+    ref: 'User'
   },
   moderators: {
-    type: [Schema.Types.ObjectId],
+    type: [{type: Schema.Types.ObjectId, ref: 'User'}],
     required: true
   },
   members: {
-    type: [Schema.Types.ObjectId],
+    type: [{type: Schema.Types.ObjectId, ref: 'User'}],
     required: true
   },
   freets: {
-    type: [Schema.Types.ObjectId],
+    type: [{type: Schema.Types.ObjectId, ref: 'Freet'}],
     required: true
   }
 });

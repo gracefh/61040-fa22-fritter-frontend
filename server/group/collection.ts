@@ -65,7 +65,7 @@ class GroupCollection {
   static async findOneByGroupId(
     groupId: Types.ObjectId | string
   ): Promise<HydratedDocument<Group>> {
-    return GroupModel.findOne({ _id: groupId });
+    return GroupModel.findOne({ _id: groupId }).populate('owner').populate('moderators').populate('members').populate({path: 'freets', populate: {path: 'authorId'}});
   }
 
   /**

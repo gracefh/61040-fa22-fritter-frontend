@@ -73,7 +73,7 @@ router.get(
     const group = await GroupCollection.findOneByGroupId(
       req.query.groupId as string
     );
-    res.status(200).json(util.constructGroupResponse(group));
+    res.status(200).json(util.constructPopulatedGroupResponse(group));
   }
 );
 

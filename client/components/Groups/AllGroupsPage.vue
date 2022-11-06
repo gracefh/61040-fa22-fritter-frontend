@@ -37,7 +37,7 @@
                 </div>
             </header>
             <section v-if="$store.state.groups.length">
-                <GroupComponent v-for="group in $store.state.groups" :key="group.id" :group="group" />
+                <GroupsComponent v-for="group in $store.state.groups" :key="group.id" :group="group" />
             </section>
             <article v-else>
                 <h3>No groups found.</h3>
@@ -47,12 +47,12 @@
 </template>
   
 <script>
-import GroupComponent from '@/components/Group/GroupComponent.vue';
-import GetGroupsForm from '@/components/Group/GetGroupsForm.vue';
+import GroupsComponent from '@/components/Groups/GroupsComponent.vue';
+import GetGroupsForm from '@/components/Groups/GetGroupsForm.vue';
 
 export default {
-    name: 'GroupPage',
-    components: { GroupComponent, GetGroupsForm },
+    name: 'AllGroupsPage',
+    components: { GroupsComponent, GetGroupsForm },
     mounted() {
         this.$refs.getGroupsForm.submit();
     }

@@ -10,7 +10,11 @@
                 </h3>
                 <div>{{ group.description }}</div>
             </div>
-            <button class="visit-group">Visit</button>
+            <button class="visit-group">
+                <router-link :to="{ name: 'Group', params: { groupId: group._id } }">
+                    Visit
+                </router-link>
+            </button>
         </div>
         <section class="alerts">
             <article v-for="(status, alert, index) in alerts" :key="index" :class="status">
@@ -22,7 +26,7 @@
   
 <script>
 export default {
-    name: 'GroupComponent',
+    name: 'GroupsComponent',
     props: {
         // Data from the stored freet
         group: {
@@ -130,8 +134,8 @@ export default {
 }
 
 .group-overall {
-    display:flex;
-    justify-content:space-between;
+    display: flex;
+    justify-content: space-between;
     align-items: center;
 }
 
