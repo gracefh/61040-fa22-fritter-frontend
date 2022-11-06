@@ -1,7 +1,7 @@
 <!-- Reusable component representing a single group's page -->
 
 <template>
-    <article class="single-group">
+    <main class="single-group">
         <div class="group-overall">
             <div class="group-info">
                 <h3 class="group-name">
@@ -10,25 +10,31 @@
                 <div>{{ group.description }}</div>
             </div>
         </div>
-        <section v-if="group.freets.length > 0">
-            <FreetComponent v-for="freet in group.freets" :key="freet.id" :freet="freet" />
-        </section>
+        <div class="group-content">
+            <section class="freets" v-if="group.freets.length > 0">
+                <FreetComponent v-for="freet in group.freets" :key="freet.id" :freet="freet" />
+            </section>
+            <section class="sidebar">
+                <MembersComponent :members="group.members" />
+            </section>
+        </div>
         <section class="alerts">
             <article v-for="(status, alert, index) in alerts" :key="index" :class="status">
                 <p>{{ alert }}</p>
             </article>
         </section>
 
-    </article>
+    </main>
 
 </template>
   
 <script>
 import FreetComponent from '@/components/Freet/FreetComponent.vue';
+import MembersComponent from '@/components/Group/MembersComponent.vue';
 
 export default {
     name: 'GroupPage',
-    components: { FreetComponent },
+    components: { FreetComponent, MembersComponent },
     data() {
         return {
             group: null,
@@ -89,10 +95,20 @@ export default {
 </script>
   
 <style scoped>
+
+.single-group {
+    width:85vw;
+    padding:0;
+}
 .group {
     border: 1px solid #111;
-    padding: 20px;
     position: relative;
+}
+
+.group-info {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
 }
 
 .group-overall {
@@ -103,6 +119,19 @@ export default {
 
 .visit-group {
     padding: 5px 20px;
+}
+
+.group-content {
+    display: flex;
+    flex-direction:row;
+}
+
+.freets {
+    width:70vw;
+}
+.sidebar {
+    width:15vw;
+    padding: 0 0 0 2em;
 }
 </style>
   

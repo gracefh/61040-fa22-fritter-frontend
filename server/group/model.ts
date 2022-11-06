@@ -1,7 +1,7 @@
 import type {Types} from 'mongoose';
 import {Schema, model} from 'mongoose';
 import { User } from '../user/model';
-import { Freet} from '../freet/model';
+import { Freet, PopulatedFreet} from '../freet/model';
 
 /**
  * This file defines the properties stored in a Group
@@ -26,7 +26,7 @@ export type PopulatedGroup = {
   owner: User;
   moderators: Array<User>;
   members: Array<User>;
-  freets: Array<Freet>;
+  freets: Array<PopulatedFreet>;
 };
 
 // Mongoose schema definition for interfacing with a MongoDB table

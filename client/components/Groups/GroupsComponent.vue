@@ -2,7 +2,7 @@
 <!-- We've tagged some elements with classes; consider writing CSS using those classes to style them... -->
 
 <template>
-    <article class="group">
+    <main class="group">
         <div class="group-overall">
             <div class="group-info">
                 <h3 class="group-name">
@@ -21,7 +21,7 @@
                 <p>{{ alert }}</p>
             </article>
         </section>
-    </article>
+    </main>
 </template>
   
 <script>

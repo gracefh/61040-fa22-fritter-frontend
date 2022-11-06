@@ -1,6 +1,9 @@
 import type { HydratedDocument } from "mongoose";
 import type { Group, PopulatedGroup } from "./model";
 import { formatDate, FreetResponse } from "../freet/util";
+import type { PopulatedFreet } from "../freet/model";
+import { User } from "../user/model";
+import { UserResponse } from "../user/util";
 
 
 type GroupResponse = {
@@ -18,9 +21,9 @@ type PopulatedGroupResponse = {
   _id: string;
   name: string;
   description: string;
-  owner: string;
-  moderators: string[];
-  members: string[];
+  owner: UserResponse;
+  moderators: UserResponse[];
+  members: UserResponse[];
   freets: FreetResponse[];
 };
 
@@ -73,17 +76,26 @@ export const constructPopulatedGroupResponse = (
   return {
     ...groupCopy,
     _id: groupCopy._id.toString(),
-    members: [""],
-    moderators: [""],
-    owner: "",
-    freets: Array.from(groupCopy.freets).map((freet) => {
-      return {
-        _id: freet._id.toString(),
-        author: freet.authorId.toString(),
-        content: freet.content,
-        dateCreated: formatDate(freet.dateCreated),
-        dateModified: formatDate(freet.dateModified)
-      };
-    }),
+    members: groupCopy.members.map((user) => convertUser(user)),
+    moderators: groupCopy.moderators.map((user) => convertUser(user)),
+    owner: convertUser(groupCopy.owner),
+    freets: groupCopy.freets.map((freet) => convertFreet(freet)),
   };
 };
+
+const convertUser = (user: User): UserResponse => {
+  return {
+    _id: user._id.toString(),
+    username: user.username,
+    dateJoined: formatDate(user.dateJoined)
+  }
+}
+const convertFreet = (freet: PopulatedFreet): FreetResponse => {
+  return {
+    _id: freet._id.toString(),
+    author: freet.authorId.username,
+    content: freet.content,
+    dateCreated: formatDate(freet.dateCreated),
+    dateModified: formatDate(freet.dateModified)
+  };
+}
