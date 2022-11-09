@@ -8,7 +8,11 @@
                     {{ group.name }}
                 </h3>
                 <div>{{ group.description }}</div>
-                <OwnerComponent v-if="role === 'owner'" class="ownerActions" :groupId="groupId" />
+                <section  v-if="role === 'owner'">
+                    <OwnerComponent class="ownerActions" :groupId="groupId" />
+                </section>
+                
+                <MemberComponent :groupId="groupId" :role="role"/>
                 <div>
                     {{ role }}
                 </div>
@@ -19,7 +23,7 @@
                 <FreetComponent v-for="freet in group.freets" :key="freet.id" :freet="freet" />
             </section>
             <section class="sidebar">
-                <MembersComponent :members="group.members" />
+                <MemberListComponent :members="group.members" />
             </section>
         </div>
         <section class="alerts">
@@ -34,12 +38,13 @@
   
 <script>
 import FreetComponent from '@/components/Freet/FreetComponent.vue';
-import MembersComponent from '@/components/Group/MembersComponent.vue';
+import MemberListComponent from '@/components/Group/MemberListComponent.vue';
 import OwnerComponent from '@/components/Group/OwnerComponent.vue';
+import MemberComponent from '@/components/Group/MemberComponent.vue';
 
 export default {
     name: 'GroupPage',
-    components: { FreetComponent, MembersComponent, OwnerComponent },
+    components: { FreetComponent, MemberListComponent, OwnerComponent, MemberComponent },
     props: {
         role: {
             type: String,

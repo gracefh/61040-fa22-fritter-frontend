@@ -20,7 +20,6 @@ export default {
           throw new Error(res.error);
         }
 
-        // this.$store.commit('updateFilter', this.value);
         this.$store.commit('updateGroups', res);
       } catch (e) {
         if (this.value === this.$store.state.filter) {

@@ -1,4 +1,4 @@
-<!-- Show all owner functionalities in group -->
+<!-- Show all member functionalities of a group -->
 
 <template>
     <aside>
@@ -11,8 +11,11 @@
         <button v-if="!editing" @click="startEditing">
             ✏️ Edit
         </button> -->
-        <button @click="deleteGroup">
-            🗑️ Delete
+        <button v-if="!isMember" @click="joinGroup">
+            <i class="fa fa-solid fa-arrow-right-to-bracket"></i> Join Group
+        </button>
+        <button v-if="isMember" @click="leaveGroup">
+            <i class="fa fa-solid fa-arrow-right-from-bracket"></i> Leave Group
         </button>
     </aside>
 
@@ -21,26 +24,54 @@
 <script>
 
 export default {
-    name: 'OwnerComponent',
+    name: 'MemberComponent',
     props: {
         groupId: {
             type: String,
             required: true
+        },
+        role: {
+            type: String,
+            required: true
         }
     },
+    data() {
+        const role = this.role !== 'notJoined';
+        return {
+            isMember: role
+        };
+    },
     methods: {
-        deleteGroup() {
+        joinGroup() {
             /**
-             * Deletes this group.
+             * joins this group.
+             */
+            const params = {
+                method: 'POST',
+                callback: () => {
+                    this.$store.commit('alert', {
+                        message: 'Successfully joined group', status: 'success'
+                    });
+                }
+            };
+            
+            // memberStatus = true;
+            this.request(params);
+        },
+        leaveGroup() {
+            /**
+             * leaves this group.
              */
             const params = {
                 method: 'DELETE',
                 callback: () => {
                     this.$store.commit('alert', {
-                        message: 'Successfully deleted group!', status: 'success'
+                        message: 'Successfully left group', status: 'success'
                     });
                 }
             };
+
+            // memberStatus = false;
             
             this.request(params);
         },
@@ -59,7 +90,7 @@ export default {
             }
 
             try {
-                const r = await fetch(`/api/owner/groups/${this.groupId}`, options);
+                const r = await fetch(`/api/groups/${this.groupId}/member`, options);
                 if (!r.ok) {
                     const res = await r.json();
                     throw new Error(res.error);
@@ -74,11 +105,6 @@ export default {
                 setTimeout(() => this.$delete(this.alerts, e), 3000);
             }
 
-            // redirect if deleting group
-            if (params.method === 'DELETE')
-            {
-                this.$router.push('/groups');
-            }
         }
     }
 };

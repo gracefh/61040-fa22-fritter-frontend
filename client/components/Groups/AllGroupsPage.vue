@@ -21,6 +21,7 @@
             </article>
         </section>
         <section>
+            <CreateGroupForm ref="createGroupForm" />
             <header>
                 <div class="left">
                     <h2>
@@ -66,16 +67,18 @@
 <script>
 import GroupsComponent from '@/components/Groups/GroupsComponent.vue';
 import GetGroupsForm from '@/components/Groups/GetGroupsForm.vue';
+import CreateGroupForm from '@/components/Groups/CreateGroupForm.vue';
 
 export default {
     name: 'AllGroupsPage',
-    components: { GroupsComponent, GetGroupsForm },
+    components: { GroupsComponent, GetGroupsForm, CreateGroupForm },
     data() {
         return {
             ownedGroups: [],
             moderatedGroups: [],
             memberedGroups: [],
-            otherGroups: []
+            otherGroups: [],
+            allGroups: this.$store.state.groups
         }
     },
     mounted() {
@@ -91,8 +94,8 @@ export default {
     },
     methods: {
         async setData() {
-            const roles = [null, "member", "moderator", "owner"];
-            const results = await Promise.all(roles.map((role) => { return role == null ? fetch(`/api/groups`) : fetch(`/api/groups/member?role=${role}`) }));
+            const roles = ["member", "moderator", "owner"];
+            const results = await Promise.all(roles.map((role) => fetch(`/api/groups/member?role=${role}`) ));
             const res = await Promise.all(results.map(r => r.json()));
 
             for (let ind = 0; ind < roles.length; ind++) {
@@ -101,10 +104,10 @@ export default {
                 }
             }
             // See if you can make this better :")
-            this.ownedGroups = res[3];
-            this.moderatedGroups = res[2].filter(o1 => !res[3].some(o2 => o1._id === o2._id));
-            this.memberedGroups = res[1].filter(o1 => !res[2].some(o2 => o1._id === o2._id));
-            this.otherGroups = res[0].filter(o1 => !res[1].some(o2 => o1._id === o2._id));
+            this.ownedGroups = res[2];
+            this.moderatedGroups = res[1].filter(o1 => !res[2].some(o2 => o1._id === o2._id));
+            this.memberedGroups = res[0].filter(o1 => !res[1].some(o2 => o1._id === o2._id));
+            this.otherGroups = this.$store.state.groups.filter(o1 => !res[0].some(o2 => o1._id === o2._id));
 
         },
         async request(params) {
@@ -115,8 +118,7 @@ export default {
              * @param params.callback - Function to run if the the request succeeds
              */
             const options = {
-                method: para
-                    | ms.method, headers: { 'Content-Type': 'application/json' }
+                method: params.method, headers: { 'Content-Type': 'application/json' }
             };
             if (params.body) {
                 options.body = params.body;

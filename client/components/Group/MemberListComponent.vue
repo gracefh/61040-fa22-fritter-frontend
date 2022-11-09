@@ -17,7 +17,7 @@
 <script>
 
 export default {
-    name: 'MembersComponent',
+    name: 'MemberListComponent',
     props: {
         members: {
             type: Array,

@@ -10,11 +10,11 @@
                 </h3>
                 <div>{{ group.description }}</div>
             </div>
-            <button class="visit-group">
-                <router-link :to="{ name: 'Group', params: { groupId: group._id , role: role}}">
-                    Visit
-                </router-link>
-            </button>
+
+            <router-link :to="{ name: 'Group', params: { groupId: group._id, role: role } }">
+                <button class="visit-group"> Visit</button>
+            </router-link>
+
         </div>
         <section class="alerts">
             <article v-for="(status, alert, index) in alerts" :key="index" :class="status">
@@ -40,9 +40,7 @@ export default {
     },
     data() {
         return {
-            editing: false, // Whether or not this freet is in edit mode
-            draft: this.group.content, // Potentially-new content for this freet
-            alerts: {} // Displays success/error messages encountered during freet modification
+            alerts: {}
         };
     },
     methods: {
