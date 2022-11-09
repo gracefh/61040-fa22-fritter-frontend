@@ -35,11 +35,11 @@
 <style scoped>
 nav {
   padding: 1vw 2vw;
-  background-color: #ccc;
   display: flex;
   justify-content: space-between;
   align-items: center;
   position: relative;
+  border-bottom:1px solid;
 }
 
 .title {
@@ -54,10 +54,12 @@ img {
 .left {
   display: flex;
   align-items: center;
+  border:0px;
 }
 
 .right {
   font-size: 20px;
+  font-weight:600;
   display: grid;
   gap: 16px;
   grid-auto-flow: column;
@@ -66,6 +68,7 @@ img {
 
 .right a {
   margin-left: 5px;
+  padding: 0 5px;
 }
 
 .alerts {

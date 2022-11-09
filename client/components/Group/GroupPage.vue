@@ -8,6 +8,10 @@
                     {{ group.name }}
                 </h3>
                 <div>{{ group.description }}</div>
+                <OwnerComponent v-if="role === 'owner'" class="ownerActions" :groupId="groupId" />
+                <div>
+                    {{ role }}
+                </div>
             </div>
         </div>
         <div class="group-content">
@@ -31,10 +35,21 @@
 <script>
 import FreetComponent from '@/components/Freet/FreetComponent.vue';
 import MembersComponent from '@/components/Group/MembersComponent.vue';
+import OwnerComponent from '@/components/Group/OwnerComponent.vue';
 
 export default {
     name: 'GroupPage',
-    components: { FreetComponent, MembersComponent },
+    components: { FreetComponent, MembersComponent, OwnerComponent },
+    props: {
+        role: {
+            type: String,
+            required: true
+        },
+        groupId: {
+            type: String,
+            required: true
+        }
+    },
     data() {
         return {
             group: null,
@@ -95,11 +110,11 @@ export default {
 </script>
   
 <style scoped>
-
 .single-group {
-    width:85vw;
-    padding:0;
+    width: 85vw;
+    padding: 0 0 0 5em;
 }
+
 .group {
     border: 1px solid #111;
     position: relative;
@@ -123,15 +138,11 @@ export default {
 
 .group-content {
     display: flex;
-    flex-direction:row;
+    flex-direction: row;
 }
 
 .freets {
-    width:70vw;
-}
-.sidebar {
-    width:15vw;
-    padding: 0 0 0 2em;
+    width: 70vw;
 }
 </style>
   

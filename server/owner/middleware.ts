@@ -21,7 +21,7 @@ const isUserOwner = async (req: Request, res: Response, next: NextFunction) => {
     return;
   }
   const result = await OwnerCollection.findOneByGroupId(group._id);
-  if (req.session?.userId !== result.userId._id.toString()) {
+  if (!result || req.session?.userId !== result.userId._id.toString()) {
     res.status(403).json({
       error: {
         userNotOwner: `Current logged in user is not owner of group with group Id ${req.params.groupId}`,

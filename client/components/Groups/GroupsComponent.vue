@@ -11,7 +11,7 @@
                 <div>{{ group.description }}</div>
             </div>
             <button class="visit-group">
-                <router-link :to="{ name: 'Group', params: { groupId: group._id } }">
+                <router-link :to="{ name: 'Group', params: { groupId: group._id , role: role}}">
                     Visit
                 </router-link>
             </button>
@@ -28,9 +28,13 @@
 export default {
     name: 'GroupsComponent',
     props: {
-        // Data from the stored freet
+        // Data from the stored group
         group: {
             type: Object,
+            required: true
+        },
+        role: {
+            type: String,
             required: true
         }
     },

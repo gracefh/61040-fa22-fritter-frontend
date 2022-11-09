@@ -13,7 +13,7 @@ const routes = [
   {path: '/', name: 'Home', component: FreetsPage},
   {path: '/account', name: 'Account', component: AccountPage},
   {path: '/groups', name: 'Groups', component: AllGroupsPage},
-  {path: '/groups/:groupId', name: 'Group', component: GroupPage},
+  {path: '/groups/:groupId', name: 'Group', component: GroupPage, props: true},
   {path: '/login', name: 'Login', component: LoginPage},
   {path: '*', name: 'Not Found', component: NotFound}
 ];

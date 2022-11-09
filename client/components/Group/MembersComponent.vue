@@ -19,8 +19,10 @@
 export default {
     name: 'MembersComponent',
     props: {
-        members: Array,
-        required: true
+        members: {
+            type: Array,
+            required: true
+        }
     }
 };
 </script>

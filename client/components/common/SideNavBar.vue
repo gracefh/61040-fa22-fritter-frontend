@@ -26,13 +26,20 @@
 nav {
     padding: 1vw 2vw;
     width: 15vw;
-    height:100vw;
-    background-color: #ccc;
+    height: 100vw;
+    font-size: 30;
+    font-weight: 600;
     display: flex;
     flex-direction: column;
-    gap:2em;
+    gap: 2em;
     align-items: center;
     position: relative;
+    border-right: 1px solid black;
+    
+}
+
+nav a {
+    padding: 0 5px;
 }
 
 .title {
@@ -44,22 +51,6 @@ img {
     height: 32px;
 }
 
-.left {
-    display: flex;
-    align-items: center;
-}
-
-.right {
-    font-size: 20px;
-    display: grid;
-    gap: 16px;
-    grid-auto-flow: column;
-    align-items: center;
-}
-
-.right a {
-    margin-left: 5px;
-}
 
 .alerts {
     width: 25%;

@@ -43,6 +43,9 @@ body {
   display: flex;
   margin: 0;
   font-size: 1.2em;
+  background-color: #9cc8ef;
+  color: black;
+  font-family: Verdana, Arial, Helvetica, sans-serif;
 }
 
 main {
@@ -55,8 +58,9 @@ main {
 } */
 
 .pageContent {
-  display:flex;
+  display: flex;
 }
+
 .sideNav {
   float: left;
 }
@@ -88,5 +92,42 @@ main {
 
 .alerts .success {
   background-color: rgb(45, 135, 87);
+}
+
+button {
+  border-radius: 5px;
+  border: 1px solid black;
+}
+
+button:hover {
+  background-color: #55A9F2;
+  cursor: pointer;
+  -webkit-transition: all ease 1s;
+  -moz-transition: all ease 1s;
+  transition: all ease 1s;
+}
+nav .router-link-exact-active {
+  border: 2px solid black;
+  border-radius: 5px;
+  
+}
+
+a {
+  text-decoration: none;
+  color: black;
+}
+
+a:hover {
+  color: #495E70;
+  -webkit-transition: all ease 1s;
+  -moz-transition: all ease 1s;
+  transition: all ease 1s;
+}
+
+
+
+.sidebar {
+  width: 15vw;
+  padding: 0 0 0 2em;
 }
 </style>
