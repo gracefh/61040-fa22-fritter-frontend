@@ -22,21 +22,13 @@
         </section>
         <section>
             <CreateGroupForm ref="createGroupForm" />
-            <header>
-                <div class="left">
-                    <h2>
-                        Viewing all groups
-                        <span v-if="$store.state.filter">
-                            by @{{ $store.state.filter }}
-                        </span>
-                    </h2>
-                </div>
+            <!-- <header>
                 <div class="right">
                     <GetGroupsForm ref="getGroupsForm" value="role" placeholder="🔍 Filter by role (optional)"
                         button="🔄 Get groups" />
                 </div>
-            </header>
-            <section v-if="$store.state.groups.length">
+            </header> -->
+            <section v-if="$store.state.groups.length" class="groups-list">
                 <section v-if="this.ownedGroups.length > 0">
                     <h2>Groups You Own</h2>
                     <GroupsComponent v-for="group in this.ownedGroups" :key="group.id" :group="group" :role="'owner'" />
@@ -57,9 +49,9 @@
                         :role="'notJoined'" />
                 </section>
             </section>
-            <article v-else>
+            <section v-else>
                 <h3>No groups found.</h3>
-            </article>
+            </section>
         </section>
     </main>
 </template>
@@ -81,11 +73,11 @@ export default {
             allGroups: this.$store.state.groups
         }
     },
-    mounted() {
-        this.$refs.getGroupsForm.submit();
-    },
+    // mounted() {
+    //     this.$refs.getGroupsForm.submit();
+    // },
     async beforeRouteEnter(to, from, next) {
-        next(async vm => await vm.setData())
+        next(async vm => await vm.setData());
     },
     // when route changes and this component is already rendered,
     // the logic will be slightly different.
@@ -95,7 +87,7 @@ export default {
     methods: {
         async setData() {
             const roles = ["member", "moderator", "owner"];
-            const results = await Promise.all(roles.map((role) => fetch(`/api/groups/member?role=${role}`) ));
+            const results = await Promise.all(roles.map((role) => fetch(`/api/groups/member?role=${role}`)));
             const res = await Promise.all(results.map(r => r.json()));
 
             for (let ind = 0; ind < roles.length; ind++) {
@@ -165,6 +157,10 @@ section .scrollbox {
     flex: 1 0 50vh;
     padding: 3%;
     overflow-y: scroll;
+}
+
+.groups-list {
+    width: 70%;
 }
 </style>
   

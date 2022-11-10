@@ -4,28 +4,36 @@
     <main class="single-group">
         <div class="group-overall">
             <div class="group-info">
-                <h3 class="group-name">
+                <h2 class="group-name">
                     {{ group.name }}
-                </h3>
+                </h2>
                 <div>{{ group.description }}</div>
-                <section  v-if="role === 'owner'">
+                <section v-if="role === 'owner'">
                     <OwnerComponent class="ownerActions" :groupId="groupId" />
                 </section>
-                
-                <MemberComponent :groupId="groupId" :role="role"/>
+                <MemberComponent :groupId="groupId" :role="role" />
                 <div>
                     {{ role }}
                 </div>
             </div>
         </div>
-        <div class="group-content">
-            <section class="freets" v-if="group.freets.length > 0">
-                <FreetComponent v-for="freet in group.freets" :key="freet.id" :freet="freet" />
+        <section class="group-content">
+            <section v-if="role !== 'notJoined'">
+                <CreateGroupFreetForm @refreshGroup="refreshGroupFreets" :groupId="group._id" />
             </section>
+            <section class="freets" v-if="group.freets.length > 0">
+                <GroupFreetComponent v-for="freet in reverseFreets" :key="freet.id" :freet="freet"
+                    :showModeratorFunctions="role === 'owner' || role === 'moderator'" />
+            </section>
+        </section>
+        <aside>
             <section class="sidebar">
                 <MemberListComponent :members="group.members" />
             </section>
-        </div>
+            <section class="sidebar">
+                <ModeratorListComponent :moderators="group.moderators" />
+            </section>
+        </aside>
         <section class="alerts">
             <article v-for="(status, alert, index) in alerts" :key="index" :class="status">
                 <p>{{ alert }}</p>
@@ -37,23 +45,28 @@
 </template>
   
 <script>
-import FreetComponent from '@/components/Freet/FreetComponent.vue';
+import GroupFreetComponent from '@/components/Group/GroupFreetComponent.vue';
 import MemberListComponent from '@/components/Group/MemberListComponent.vue';
+import ModeratorListComponent from '@/components/Group/ModeratorListComponent.vue';
 import OwnerComponent from '@/components/Group/OwnerComponent.vue';
 import MemberComponent from '@/components/Group/MemberComponent.vue';
+import CreateGroupFreetForm from '@/components/Group/CreateGroupFreetForm.vue';
 
 export default {
     name: 'GroupPage',
-    components: { FreetComponent, MemberListComponent, OwnerComponent, MemberComponent },
+    components: { GroupFreetComponent, MemberListComponent, OwnerComponent, MemberComponent, ModeratorListComponent, CreateGroupFreetForm },
     props: {
-        role: {
-            type: String,
-            required: true
-        },
         groupId: {
             type: String,
             required: true
+        },
+        role: {
+            type: String,
+            required: true
         }
+    },
+    mounted() {
+        this.setData(this.groupId);
     },
     data() {
         return {
@@ -61,23 +74,32 @@ export default {
             alerts: {}
         }
     },
+    computed: {
+        reverseFreets: function() {
+            return this.group.freets.slice().reverse();
+        }
+    },
     async beforeRouteEnter(to, from, next) {
-        next(async vm => await vm.setData(to.params.groupId))
+        next(async vm => await vm.setData(to.params.groupId));
     },
     // when route changes and this component is already rendered,
     // the logic will be slightly different.
     async beforeRouteUpdate(to, from) {
-        this.group = null
         await setData(to.params.groupId);
     },
     methods: {
+        async refreshGroup() {
+            await this.setData(this.groupId);
+        },
         async setData(groupId) {
             const r = await fetch(`/api/groups?groupId=${groupId}`);
             const res = await r.json();
             if (!r.ok) {
                 throw new Error(res.error);
             }
-            this.group = res;
+            this.group = { ...res };
+
+            console.log(this.group);
         },
         async request(params) {
             /**
@@ -87,8 +109,7 @@ export default {
              * @param params.callback - Function to run if the the request succeeds
              */
             const options = {
-                method: para
-                    | ms.method, headers: { 'Content-Type': 'application/json' }
+                method: params.method, headers: { 'Content-Type': 'application/json' }
             };
             if (params.body) {
                 options.body = params.body;
@@ -127,8 +148,8 @@ export default {
 
 .group-info {
     display: flex;
-    flex-direction: row;
-    align-items: center;
+    flex-direction: column;
+    align-items: flex-start;
 }
 
 .group-overall {
@@ -143,11 +164,15 @@ export default {
 
 .group-content {
     display: flex;
-    flex-direction: row;
+    flex-direction:column;
 }
 
 .freets {
     width: 70vw;
+}
+
+.group-name {
+    padding-bottom: 0;
 }
 </style>
   

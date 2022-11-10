@@ -154,7 +154,8 @@ const isUserInGroup = async (
     });
     return;
   }
-  if (!group.members.includes(req.session.userId)) {
+  if (!group.members.map((member) => member._id.toString()).includes(req.session.userId)) {
+    console.log(group.members.map((member) => member._id.toString()));
     res.status(409).json({
       error: {
         notMember: `User with userId ${req.session.userId} is not in group ${req.params.groupId}.`,
