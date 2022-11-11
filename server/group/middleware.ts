@@ -181,7 +181,7 @@ const isUserParamInGroup = async (
   const group = validFormat
     ? await GroupCollection.findOneByGroupId(req.params.groupId)
     : "";
-  const user = validFormat
+  const user = validUserFormat
     ? await UserCollection.findOneByUserId(req.params.userId)
     : "";
   if (!group) {
@@ -200,7 +200,7 @@ const isUserParamInGroup = async (
     });
     return;
   }
-  if (!group.members.includes(user._id)) {
+  if (!group.members.map((member) => member._id.toString()).includes(user._id.toString())) {
     res.status(409).json({
       error: {
         notMember: `User with userId ${req.session.userId} is not in group ${req.params.groupId}.`,
@@ -240,11 +240,14 @@ const isFreetInGroup = async (
       },
     });
   }
+
+  const allFreets = await GroupCollection.findAllFreets(group._id);
   const freet = await FreetCollection.findOne(req.params.freetId);
-  if (!group.freets.includes(freet._id)) {
+
+  if (!allFreets.includes(freet._id)) {
     res.status(404).json({
       error: {
-        FreetNotInGroup: `Freet with freet ID ${req.session.freetId} is not in group ${req.params.groupId}.`,
+        FreetNotInGroup: `Freet with freet ID ${req.params.freetId} is not in group ${req.params.groupId}.`,
       },
     });
     return;

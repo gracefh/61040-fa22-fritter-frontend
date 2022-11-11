@@ -26,7 +26,7 @@
 nav {
     padding: 1vw 2vw;
     width: 15vw;
-    height: 100vw;
+    min-height: 100vh;
     font-size: 30;
     font-weight: 600;
     display: flex;

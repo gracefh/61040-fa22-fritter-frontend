@@ -1,7 +1,7 @@
 import FreetCollection from "../freet/collection";
 import type { HydratedDocument, Types } from "mongoose";
 import UserCollection from "../user/collection";
-import type { Group } from "./model";
+import type { Group, PopulatedGroup } from "./model";
 import GroupModel from "./model";
 import ModerationCollection from "../moderation/collection";
 import OwnerCollection from "../owner/collection";
@@ -65,7 +65,7 @@ class GroupCollection {
   static async findOneByGroupId(
     groupId: Types.ObjectId | string
   ): Promise<HydratedDocument<Group>> {
-    return GroupModel.findOne({ _id: groupId }).populate('owner').populate('moderators').populate('members').populate({path: 'freets', populate: {path: 'authorId'}});
+    return GroupModel.findOne({ _id: groupId }).populate('owner').populate('moderators').populate('members').populate({ path: 'freets', populate: { path: 'authorId' } });
   }
 
   /**
@@ -165,7 +165,7 @@ class GroupCollection {
     groupId: Types.ObjectId | string,
     groupDetails: any
   ): Promise<HydratedDocument<Group>> {
-    const group = await GroupCollection.findOneByGroupId(groupId);
+    const group = await GroupModel.findOne({ _id: groupId });
     if (groupDetails.name) {
       group.name = groupDetails.name as string;
     }
@@ -186,9 +186,9 @@ class GroupCollection {
    *
    * @return {Promise<Array<Types.ObjectId>>} - An array of all of the freet Id's
    */
-  static async findAllFreets(groupId: string): Promise<Array<Types.ObjectId>> {
+  static async findAllFreets(groupId: string | Types.ObjectId): Promise<Array<Types.ObjectId>> {
     // Retrieves freets and sorts them in backwards time order
-    const group = await GroupCollection.findOneByGroupId(groupId);
+    const group = await GroupModel.findOne({ _id: groupId });
     if (group === null) {
       return [];
     }
@@ -209,7 +209,7 @@ class GroupCollection {
     freetId: string | Types.ObjectId,
     groupId: string | Types.ObjectId
   ): Promise<HydratedDocument<Group>> {
-    const group = await GroupCollection.findOneByGroupId(groupId);
+    const group = await GroupModel.findOne({ _id: groupId });
     const freet = await FreetCollection.findOne(freetId);
     if (group === null || freet === null)
       // group or freet doesn't exist
@@ -233,7 +233,7 @@ class GroupCollection {
     freetId: string | Types.ObjectId,
     groupId: string | Types.ObjectId
   ): Promise<boolean> {
-    const group = await GroupCollection.findOneByGroupId(groupId);
+    const group = await GroupModel.findOne({ _id: groupId });
     const freet = await FreetCollection.findOne(freetId);
     if (group === null || freet === null)
       // group or freet doesn't exist
@@ -263,7 +263,7 @@ class GroupCollection {
     groupId: string | Types.ObjectId,
     userType: string
   ): Promise<HydratedDocument<Group>> {
-    const group = await GroupCollection.findOneByGroupId(groupId);
+    const group = await GroupModel.findOne({ _id: groupId });
     const user = await UserCollection.findOneByUserId(userId);
     if (group === null || user === null)
       // group or user doesn't exist
@@ -297,7 +297,7 @@ class GroupCollection {
     userId: string | Types.ObjectId,
     groupId: string | Types.ObjectId
   ): Promise<boolean> {
-    const group = await GroupCollection.findOneByGroupId(groupId);
+    const group = await GroupModel.findOne({ _id: groupId });
     const user = await UserCollection.findOneByUserId(userId);
     if (group === null || user === null)
       // group or user doesn't exist
@@ -334,7 +334,7 @@ class GroupCollection {
     userId: string,
     groupId: string
   ): Promise<boolean> {
-    const group = await GroupCollection.findOneByGroupId(groupId);
+    const group = await GroupModel.findOne({ _id: groupId });
     const user = await UserCollection.findOneByUserId(userId);
     if (group === null || user === null)
       // group or user doesn't exist
@@ -365,7 +365,7 @@ class GroupCollection {
     userId: string | Types.ObjectId,
     groupId: string | Types.ObjectId
   ): Promise<HydratedDocument<Owner>> {
-    const group = await GroupCollection.findOneByGroupId(groupId);
+    const group = await GroupModel.findOne({ _id: groupId });
     const user = await UserCollection.findOneByUserId(userId);
     group.owner = user._id;
 

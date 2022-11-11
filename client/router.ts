@@ -10,16 +10,16 @@ import NotFound from './NotFound.vue';
 
 Vue.use(VueRouter);
 
-const groupProps = function (route) {
-  return route.params;
-}
+// const groupProps = function (route) {
+//   return route.params;
+// }
 
 
 const routes = [
   { path: '/', name: 'Home', component: FreetsPage },
   { path: '/account', name: 'Account', component: AccountPage },
-  { path: '/groups', name: 'Groups', component: AllGroupsPage },
-  { path: '/groups/:groupId', name: 'Group', component: GroupPage, props: groupProps },
+  { path: '/groups', name: 'Groups', component: AllGroupsPage},
+  { path: '/groups/:groupId', name: 'Group', component: GroupPage, props: true },
   { path: '/login', name: 'Login', component: LoginPage },
   { path: '*', name: 'Not Found', component: NotFound }
 ];

@@ -53,9 +53,6 @@ main {
   width: 70vw;
 }
 
-/* article {
-  width:70vw;
-} */
 
 .pageContent {
   display: flex;
@@ -128,6 +125,9 @@ a:hover {
 
 .sidebar {
   width: 15vw;
-  padding: 0 0 0 2em;
+  padding: 0 0 2vw;
+  text-align:center;
+  min-height:100vh;
+  border-left:1px solid black
 }
 </style>

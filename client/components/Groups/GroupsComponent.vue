@@ -11,7 +11,7 @@
                 <div>{{ group.description }}</div>
             </div>
 
-            <router-link :to="{ name: 'Group', params: { groupId: group._id, role: role } }">
+            <router-link :to="{ name: 'Group', params: { groupId: group._id} }">
                 <button class="visit-group"> Visit</button>
             </router-link>
 

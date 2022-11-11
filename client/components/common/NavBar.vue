@@ -6,7 +6,7 @@
   <nav>
     <div class="left">
       <img src="../../public/logo.svg">
-        <router-link to="/">
+        <router-link to="/" class="title-link">
           <h1 class="title">Fritter</h1>
         </router-link>
     </div>
@@ -45,6 +45,11 @@ nav {
 .title {
   font-size: 32px;
   margin: 0 5px;
+
+}
+
+.title-link {
+  border: none;
 }
 
 img {

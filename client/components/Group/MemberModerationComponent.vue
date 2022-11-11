@@ -2,26 +2,23 @@
 
 <template>
     <aside>
-        <button @click="removeFreet">
-            Remove Freet
-        </button>
-        <!-- <button @click="removeUser">
+        <button @click="removeUser">
             Remove User
-        </button> -->
+        </button>
     </aside>
 </template>
   
 <script>
 
 export default {
-    name: 'ModeratorComponent',
+    name: 'MemberModerationComponent',
     props: {
         groupId: {
             type: String,
             required: true
         },
-        freet: {
-            type: Object,
+        userId: {
+            type: String,
             required: true
         }
     },
@@ -31,23 +28,7 @@ export default {
         }
     },
     methods: {
-        removeFreet() {
-            /**
-             * remove freet from group.
-             */
-            const params = {
-                method: 'DELETE',
-                callback: () => {
-                    this.$emit('refreshGroup');
-                    this.$store.commit('alert', {
-                        message: 'Successfully removed freet', status: 'success'
-                    });
-                }
-            };
 
-            const path = `/api/moderation/groups/${this.groupId}/freets/${this.freet._id}`;
-            this.request(path, params);
-        },
         removeUser() {
             /**
              * remove user from group.

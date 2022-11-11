@@ -94,6 +94,7 @@ const convertFreet = (freet: PopulatedFreet): FreetResponse => {
   return {
     _id: freet._id.toString(),
     author: freet.authorId.username,
+    authorId: freet.authorId._id.toString(),
     content: freet.content,
     dateCreated: formatDate(freet.dateCreated),
     dateModified: formatDate(freet.dateModified)

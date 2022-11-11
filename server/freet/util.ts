@@ -6,6 +6,7 @@ import type { Freet, PopulatedFreet } from '../freet/model';
 export type FreetResponse = {
   _id: string;
   author: string;
+  authorId: string;
   dateCreated: string;
   content: string;
   dateModified: string;
@@ -32,12 +33,13 @@ const constructFreetResponse = (freet: HydratedDocument<Freet>): FreetResponse =
       versionKey: false // Cosmetics; prevents returning of __v property
     })
   };
-  const { username } = freetCopy.authorId;
+  const { _id, username } = freetCopy.authorId;
   delete freetCopy.authorId;
   return {
     ...freetCopy,
     _id: freetCopy._id.toString(),
     author: username,
+    authorId: _id.toString(),
     dateCreated: formatDate(freet.dateCreated),
     dateModified: formatDate(freet.dateModified)
   };

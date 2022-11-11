@@ -22,12 +22,6 @@
         </section>
         <section>
             <CreateGroupForm ref="createGroupForm" />
-            <!-- <header>
-                <div class="right">
-                    <GetGroupsForm ref="getGroupsForm" value="role" placeholder="🔍 Filter by role (optional)"
-                        button="🔄 Get groups" />
-                </div>
-            </header> -->
             <section v-if="$store.state.groups.length" class="groups-list">
                 <section v-if="this.ownedGroups.length > 0">
                     <h2>Groups You Own</h2>
@@ -73,16 +67,11 @@ export default {
             allGroups: this.$store.state.groups
         }
     },
-    // mounted() {
-    //     this.$refs.getGroupsForm.submit();
-    // },
     async beforeRouteEnter(to, from, next) {
         next(async vm => await vm.setData());
     },
-    // when route changes and this component is already rendered,
-    // the logic will be slightly different.
     async beforeRouteUpdate(to, from) {
-        await setData();
+        await this.setData();
     },
     methods: {
         async setData() {

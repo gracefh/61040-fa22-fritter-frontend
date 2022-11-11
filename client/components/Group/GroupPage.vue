@@ -2,44 +2,41 @@
 
 <template>
     <main class="single-group">
-        <div class="group-overall">
-            <div class="group-info">
-                <h2 class="group-name">
-                    {{ group.name }}
-                </h2>
-                <div>{{ group.description }}</div>
-                <section v-if="role === 'owner'">
-                    <OwnerComponent class="ownerActions" :groupId="groupId" />
+        <section class="group-overall">
+            <section class="group-content">
+                <header class="group-info">
+                    <h2 class="group-name">
+                        {{ group.name }}
+                    </h2>
+                    <div>Description: {{ group.description }}</div>
+                    <section v-if="role === 'owner'">
+                        <OwnerComponent class="ownerActions" :groupId="groupId" />
+                    </section>
+                    <MemberComponent :groupId="groupId" :role="role" />
+                </header>
+                <section v-if="role !== 'notJoined'">
+                    <CreateGroupFreetForm class="createGroupFreetForm" @refreshGroup="refreshGroup"
+                        :groupId="groupId" />
                 </section>
-                <MemberComponent :groupId="groupId" :role="role" />
-                <div>
-                    {{ role }}
-                </div>
-            </div>
-        </div>
-        <section class="group-content">
-            <section v-if="role !== 'notJoined'">
-                <CreateGroupFreetForm @refreshGroup="refreshGroupFreets" :groupId="group._id" />
+                <section class="freets" v-if="group.freets.length > 0">
+                    <GroupFreetComponent v-for="freet in reverseFreets" :key="freet.id" :groupId="groupId" :freet="freet"
+                        :showModeratorFunctions="role === 'owner' || role === 'moderator'" @refreshGroup="refreshGroup"/>
+                </section>
             </section>
-            <section class="freets" v-if="group.freets.length > 0">
-                <GroupFreetComponent v-for="freet in reverseFreets" :key="freet.id" :freet="freet"
-                    :showModeratorFunctions="role === 'owner' || role === 'moderator'" />
+            <section class="sidebar">
+                <section>
+                    <MemberListComponent :members="group.members" :groupId="groupId" :showModeratorFunctions="role === 'owner' || role ==='moderator'" :moderators="group.moderators"/>
+                </section>
+                <section>
+                    <ModeratorListComponent :moderators="group.moderators" />
+                </section>
             </section>
         </section>
-        <aside>
-            <section class="sidebar">
-                <MemberListComponent :members="group.members" />
-            </section>
-            <section class="sidebar">
-                <ModeratorListComponent :moderators="group.moderators" />
-            </section>
-        </aside>
         <section class="alerts">
             <article v-for="(status, alert, index) in alerts" :key="index" :class="status">
                 <p>{{ alert }}</p>
             </article>
         </section>
-
     </main>
 
 </template>
@@ -60,10 +57,6 @@ export default {
             type: String,
             required: true
         },
-        role: {
-            type: String,
-            required: true
-        }
     },
     mounted() {
         this.setData(this.groupId);
@@ -71,11 +64,12 @@ export default {
     data() {
         return {
             group: null,
+            role: "notJoined",
             alerts: {}
         }
     },
     computed: {
-        reverseFreets: function() {
+        reverseFreets: function () {
             return this.group.freets.slice().reverse();
         }
     },
@@ -85,7 +79,7 @@ export default {
     // when route changes and this component is already rendered,
     // the logic will be slightly different.
     async beforeRouteUpdate(to, from) {
-        await setData(to.params.groupId);
+        await this.setData(to.params.groupId);
     },
     methods: {
         async refreshGroup() {
@@ -98,8 +92,17 @@ export default {
                 throw new Error(res.error);
             }
             this.group = { ...res };
-
-            console.log(this.group);
+            if(this.group.owner.username === this.$store.state.username) {
+                this.role = 'owner';
+            }
+            else if (this.$store.state.username in this.group.moderators.map((moderator) => moderator.username))
+            {
+                this.role = 'moderator';
+            }
+            else if (this.$store.state.username in this.group.members.map((member) => member.username))
+            {
+                this.role = 'member';
+            }
         },
         async request(params) {
             /**
@@ -138,24 +141,25 @@ export default {
 <style scoped>
 .single-group {
     width: 85vw;
-    padding: 0 0 0 5em;
+    padding: 0;
 }
 
-.group {
+/* .group {
     border: 1px solid #111;
     position: relative;
-}
+} */
 
 .group-info {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+    /* width: 65vw; */
 }
 
 .group-overall {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    flex-direction: row;
 }
 
 .visit-group {
@@ -164,15 +168,22 @@ export default {
 
 .group-content {
     display: flex;
-    flex-direction:column;
+    flex-direction: column;
+    width: 60vw;
+    padding:0 5vw;
 }
 
 .freets {
-    width: 70vw;
+    width: 60vw;
 }
 
 .group-name {
     padding-bottom: 0;
+}
+
+
+.createGroupFreetForm {
+    width: 60vw;
 }
 </style>
   

@@ -2,33 +2,19 @@
 <!-- We've tagged some elements with classes; consider writing CSS using those classes to style them... -->
 
 <template>
-  <article
-    class="freet"
-  >
+  <article class="freet">
     <header>
       <h3 class="author">
         @{{ freet.author }}
       </h3>
-      <div
-        v-if="$store.state.username === freet.author"
-        class="actions"
-      >
-        <button
-          v-if="editing"
-          @click="submitEdit"
-        >
+      <div v-if="$store.state.username === freet.author" class="actions">
+        <button v-if="editing" @click="submitEdit">
           ✅ Save changes
         </button>
-        <button
-          v-if="editing"
-          @click="stopEditing"
-        >
+        <button v-if="editing" @click="stopEditing">
           🚫 Discard changes
         </button>
-        <button
-          v-if="!editing"
-          @click="startEditing"
-        >
+        <button v-if="!editing" @click="startEditing">
           ✏️ Edit
         </button>
         <button @click="deleteFreet">
@@ -36,16 +22,8 @@
         </button>
       </div>
     </header>
-    <textarea
-      v-if="editing"
-      class="content"
-      :value="draft"
-      @input="draft = $event.target.value"
-    />
-    <p
-      v-else
-      class="content"
-    >
+    <textarea v-if="editing" class="content" :value="draft" @input="draft = $event.target.value" />
+    <p v-else class="content">
       {{ freet.content }}
     </p>
     <p class="info">
@@ -53,11 +31,7 @@
       <i v-if="freet.edited">(edited)</i>
     </p>
     <section class="alerts">
-      <article
-        v-for="(status, alert, index) in alerts"
-        :key="index"
-        :class="status"
-      >
+      <article v-for="(status, alert, index) in alerts" :key="index" :class="status">
         <p>{{ alert }}</p>
       </article>
     </section>
@@ -106,6 +80,7 @@ export default {
           this.$store.commit('alert', {
             message: 'Successfully deleted freet!', status: 'success'
           });
+          this.$emit('changedFreet');
         }
       };
       this.request(params);
@@ -124,10 +99,11 @@ export default {
       const params = {
         method: 'PATCH',
         message: 'Successfully edited freet!',
-        body: JSON.stringify({content: this.draft}),
+        body: JSON.stringify({ content: this.draft }),
         callback: () => {
           this.$set(this.alerts, params.message, 'success');
           setTimeout(() => this.$delete(this.alerts, params.message), 3000);
+          this.$emit('changedFreet');
         }
       };
       this.request(params);
@@ -140,7 +116,7 @@ export default {
        * @param params.callback - Function to run if the the request succeeds
        */
       const options = {
-        method: params.method, headers: {'Content-Type': 'application/json'}
+        method: params.method, headers: { 'Content-Type': 'application/json' }
       };
       if (params.body) {
         options.body = params.body;
@@ -168,8 +144,8 @@ export default {
 
 <style scoped>
 .freet {
-    border: 1px solid #111;
-    padding: 20px;
-    position: relative;
+  border: 1px solid #111;
+  padding: 20px;
+  position: relative;
 }
 </style>
