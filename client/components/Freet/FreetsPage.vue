@@ -76,6 +76,7 @@ export default {
 section {
   display: flex;
   flex-direction: column;
+  width: 70vw;
 }
 
 header, header > * {

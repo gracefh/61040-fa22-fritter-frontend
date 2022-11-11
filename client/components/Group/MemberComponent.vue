@@ -11,10 +11,10 @@
         <button v-if="!editing" @click="startEditing">
             ✏️ Edit
         </button> -->
-        <button v-if="!isMember" @click="joinGroup">
+        <button v-if="role === 'notJoined'" @click="joinGroup">
             <i class="fa fa-solid fa-arrow-right-to-bracket"></i> Join Group
         </button>
-        <button v-if="isMember" @click="leaveGroup">
+        <button v-else-if="role !== 'owner'" @click="leaveGroup">
             <i class="fa fa-solid fa-arrow-right-from-bracket"></i> Leave Group
         </button>
     </aside>
@@ -70,8 +70,6 @@ export default {
                     });
                 }
             };
-
-            // memberStatus = false;
             
             this.request(params);
         },

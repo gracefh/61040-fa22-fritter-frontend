@@ -103,7 +103,7 @@ export default {
         if (this.refreshFreets) {
           this.$store.commit('refreshFreets');
         }
-        
+
         if (this.refreshGroups) {
           this.$store.commit('refreshGroups');
         }
@@ -123,7 +123,8 @@ export default {
 <style scoped>
 form {
   border: 1px solid #111;
-  padding: 0.5rem;
+  padding: 1em;
+  width:70vw;
   display: flex;
   flex-direction: column;
   justify-content: space-between;

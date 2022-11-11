@@ -9,9 +9,6 @@
                         {{ group.name }}
                     </h2>
                     <div>Description: {{ group.description }}</div>
-                    <section v-if="role === 'owner'">
-                        <OwnerComponent class="ownerActions" :groupId="groupId" />
-                    </section>
                     <MemberComponent :groupId="groupId" :role="role" />
                 </header>
                 <section v-if="role !== 'notJoined'">
@@ -19,17 +16,18 @@
                         :groupId="groupId" />
                 </section>
                 <section class="freets" v-if="group.freets.length > 0">
-                    <GroupFreetComponent v-for="freet in reverseFreets" :key="freet.id" :groupId="groupId" :freet="freet"
-                        :showModeratorFunctions="role === 'owner' || role === 'moderator'" @refreshGroup="refreshGroup"/>
+                    <GroupFreetComponent v-for="freet in reverseFreets" :key="freet.id" :groupId="groupId"
+                        :freet="freet" :showModeratorFunctions="role === 'owner' || role === 'moderator'"
+                        @refreshGroup="refreshGroup" />
                 </section>
             </section>
             <section class="sidebar">
-                <section>
-                    <MemberListComponent :members="group.members" :groupId="groupId" :showModeratorFunctions="role === 'owner' || role ==='moderator'" :moderators="group.moderators"/>
-                </section>
-                <section>
-                    <ModeratorListComponent :moderators="group.moderators" />
-                </section>
+                <OwnerComponent v-if="role === 'owner'" class="ownerActions" :group="group" :groupId="groupId"
+                    @refreshGroup="refreshGroup" />
+                <MemberListComponent :members="group.members" :groupId="groupId"
+                    :showModeratorFunctions="role === 'owner' || role === 'moderator'" :moderators="group.moderators"
+                    @refreshGroup="refreshGroup" />
+                <ModeratorListComponent :moderators="group.moderators" />
             </section>
         </section>
         <section class="alerts">
@@ -92,15 +90,13 @@ export default {
                 throw new Error(res.error);
             }
             this.group = { ...res };
-            if(this.group.owner.username === this.$store.state.username) {
+            if (this.group.owner.username === this.$store.state.username) {
                 this.role = 'owner';
             }
-            else if (this.$store.state.username in this.group.moderators.map((moderator) => moderator.username))
-            {
+            else if (this.$store.state.username in this.group.moderators.map((moderator) => moderator.username)) {
                 this.role = 'moderator';
             }
-            else if (this.$store.state.username in this.group.members.map((member) => member.username))
-            {
+            else if (this.$store.state.username in this.group.members.map((member) => member.username)) {
                 this.role = 'member';
             }
         },
@@ -170,7 +166,7 @@ export default {
     display: flex;
     flex-direction: column;
     width: 60vw;
-    padding:0 5vw;
+    padding: 0 5vw;
 }
 
 .freets {

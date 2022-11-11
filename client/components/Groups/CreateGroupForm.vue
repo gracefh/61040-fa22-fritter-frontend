@@ -19,6 +19,7 @@ export default {
       refreshGroups: true,
       callback: () => {
         const message = 'Successfully created a group!';
+        this.$emit('refreshGroups');
         this.$set(this.alerts, message, 'success');
         setTimeout(() => this.$delete(this.alerts, message), 3000);
       }

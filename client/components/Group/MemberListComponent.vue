@@ -6,10 +6,10 @@
             <h3>Members</h3>
         </header>
         <ul class="member-list">
-            <div v-for="user in members" :key="user._id">
+            <li v-for="user in members" :key="user._id">
                 {{ user.username }}
-                <MemberModerationComponent v-if="canRemove(user._id)" :groupId="groupId" :userId="user._id" />
-            </div>
+                <MemberModerationComponent v-if="canRemove(user._id)" :groupId="groupId" :userId="user._id" @refreshGroup="$emit('refreshGroup')"/>
+            </li>
         </ul>
     </aside>
 
@@ -50,6 +50,14 @@ export default {
 </script>
   
 <style scoped>
+ul {
+    list-style-type: none;
+    padding-left:0;
+}
 
+aside {
+    padding:1em;
+    border-bottom: 2px solid #0D0D0D;
+}
 </style>
   

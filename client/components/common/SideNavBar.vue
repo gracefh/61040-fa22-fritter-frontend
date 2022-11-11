@@ -24,22 +24,22 @@
   
 <style scoped>
 nav {
-    padding: 1vw 2vw;
+    padding: 2vh 2vw;
     width: 15vw;
     min-height: 100vh;
-    font-size: 30;
-    font-weight: 600;
     display: flex;
     flex-direction: column;
     gap: 2em;
     align-items: center;
     position: relative;
-    border-right: 1px solid black;
+    border-right: 2px solid #0D0D0D;
     
 }
 
 nav a {
     padding: 0 5px;
+    font-size: 20px;
+    font-weight:600;
 }
 
 .title {

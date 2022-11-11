@@ -1,20 +1,17 @@
-<!-- Show all owner functionalities in group -->
+<!-- Remove freet functionality for moderators -->
 
 <template>
     <aside>
         <button @click="removeFreet">
             Remove Freet
         </button>
-        <!-- <button @click="removeUser">
-            Remove User
-        </button> -->
     </aside>
 </template>
   
 <script>
 
 export default {
-    name: 'ModeratorComponent',
+    name: 'FreetModerationComponent',
     props: {
         groupId: {
             type: String,

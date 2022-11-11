@@ -36,7 +36,7 @@ export default {
             const params = {
                 method: 'DELETE',
                 callback: () => {
-                    this.$emit('refreshGroups');
+                    this.$emit('refreshGroup');
                     this.$store.commit('alert', {
                         message: 'Successfully removed user from group', status: 'success'
                     });
@@ -84,7 +84,7 @@ export default {
   
 <style scoped>
 button {
-    color: red;
+    color: #730202;
 }
 </style>
   

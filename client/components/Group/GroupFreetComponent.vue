@@ -1,10 +1,10 @@
-<!-- Freet display for group, with moderator functionalities included -->
+<!-- Freet display for group, with freet moderation functionality included if necessary -->
 
 <template>
   <section>
     <section class="main-info">
       <aside class="moderatorFunctions" v-if="showModeratorFunctions && freet.author !== $store.state.username">
-        <ModeratorComponent ref="moderator" @refreshGroup="refreshGroup" :groupId="groupId" :freet="freet" />
+        <FreetModerationComponent ref="moderator" @refreshGroup="refreshGroup" :groupId="groupId" :freet="freet" />
       </aside>
       <FreetComponent ref="freet" @changedFreet="$emit('refreshGroup')" class="freet" :freet="freet" />
     </section>
@@ -19,11 +19,11 @@
 
 <script>
 import FreetComponent from '@/components/Freet/FreetComponent.vue';
-import ModeratorComponent from '@/components/Group/ModeratorComponent.vue'
+import FreetModerationComponent from '@/components/Group/FreetModerationComponent.vue'
 
 export default {
   name: 'GroupFreetComponent',
-  components: { FreetComponent, ModeratorComponent },
+  components: { FreetComponent, FreetModerationComponent },
   props: {
     freet: {
       type: Object,

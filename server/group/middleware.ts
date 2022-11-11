@@ -277,6 +277,34 @@ const isRoleValid = async (req: Request, res: Response, next: NextFunction) => {
   next();
 };
 
+/**
+ * Checks if logged in user is not owner of group
+ */
+ const isUserNotOwner = async (req: Request, res: Response, next: NextFunction) => {
+  const validFormat = Types.ObjectId.isValid(req.params.groupId);
+  const group = validFormat
+    ? await GroupCollection.findOneByGroupId(req.params.groupId)
+    : "";
+  if (!group) {
+    res.status(404).json({
+      error: {
+        groupNotFound: `Group with group ID ${req.params.groupId} does not exist.`,
+      },
+    });
+    return;
+  }
+  if (group.owner._id.toString() === req.session.userId) {
+    res.status(409).json({
+      error: {
+        notMember: `User with userId ${req.session.userId} is the owner of group ${req.params.groupId}.`,
+      },
+    });
+    return;
+  }
+
+  next();
+};
+
 export {
   doesGroupParamExist,
   doesGroupQueryExist,
@@ -287,4 +315,5 @@ export {
   isUserParamInGroup,
   isUserNotInGroup,
   isFreetInGroup,
+  isUserNotOwner
 };

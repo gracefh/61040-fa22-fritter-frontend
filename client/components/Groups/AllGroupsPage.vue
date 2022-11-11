@@ -21,7 +21,7 @@
             </article>
         </section>
         <section>
-            <CreateGroupForm ref="createGroupForm" />
+            <CreateGroupForm @refreshGroups="setData" ref="createGroupForm" />
             <section v-if="$store.state.groups.length" class="groups-list">
                 <section v-if="this.ownedGroups.length > 0">
                     <h2>Groups You Own</h2>
@@ -147,9 +147,8 @@ section .scrollbox {
     padding: 3%;
     overflow-y: scroll;
 }
-
 .groups-list {
-    width: 70%;
+    width: 70vw;
 }
 </style>
   

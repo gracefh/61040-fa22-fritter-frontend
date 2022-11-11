@@ -1,21 +1,58 @@
 <!-- Show all owner functionalities in group -->
 
 <template>
-    <aside>
-        <!-- <button v-if="editing" @click="submitEdit">
-            ✅ Save changes
-        </button>
-        <button v-if="editing" @click="stopEditing">
-            🚫 Discard changes
-        </button>
-        <button v-if="!editing" @click="startEditing">
-            ✏️ Edit
-        </button> -->
-        <button @click="deleteGroup">
-            🗑️ Delete Group
-        </button>
-    </aside>
-
+    <section class="owner-component">
+        <h3>Owner Actions</h3>
+        <section class="actions">
+            <section>
+                <button v-if="editingName" @click="submitEditName">
+                    ✅ Save changes
+                </button>
+                <button v-if="editingName" @click="stopEditingName">
+                    🚫 Discard changes
+                </button>
+                <button v-if="!editingName" @click="startEditingName">
+                    <i class="fa fa-solid fa-pencil"></i> Edit Group Name
+                </button>
+                <textarea v-if="editingName" class="content" :value="nameDraft"
+                    @input="nameDraft = $event.target.value" />
+            </section>
+            <section>
+                <button v-if="editingDescription" @click="submitEditDescription">
+                    ✅ Save changes
+                </button>
+                <button v-if="editingDescription" @click="stopEditingDescription">
+                    🚫 Discard changes
+                </button>
+                <button v-if="!editingDescription" @click="startEditingDescription">
+                    <i class="fa fa-solid fa-pencil"></i> Edit Group Description
+                </button>
+                <textarea v-if="editingDescription" class="content" :value="descriptionDraft"
+                    @input="descriptionDraft = $event.target.value" />
+            </section>
+            <section>
+                <section v-if="showDeletionDialogue">
+                    <p>Are you sure you want to delete the group?</p>
+                    <div style="display:flex; justify-content:space-around">
+                        <button @click="deleteGroup" class="delete">
+                            <i class="fa fa-regular fa-trash-can"></i> Yes
+                        </button>
+                        <button @click="showDeletionDialogue = false">
+                            <i class="fa fa-solid fa-x"></i> No
+                        </button>
+                    </div>
+                </section>
+                <button v-else @click="showDeletionDialogue = true" class="delete">
+                    <i class="fa-regular fa-trash-can"></i> Delete Group
+                </button>
+            </section>
+        </section>
+        <section class="alerts">
+            <article v-for="(status, alert, index) in alerts" :key="index" :class="status">
+                <p>{{ alert }}</p>
+            </article>
+        </section>
+    </section>
 </template>
   
 <script>
@@ -23,12 +60,99 @@
 export default {
     name: 'OwnerComponent',
     props: {
+        group: {
+            type: Object, required: true
+        },
         groupId: {
             type: String,
             required: true
         }
     },
+    data() {
+        return {
+            editingDescription: false,
+            editingName: false,
+            showDeletionDialogue: false,
+            alerts: {}
+        }
+    },
     methods: {
+        startEditingDescription() {
+            /**
+             * Enables edit mode on the group description.
+             */
+            this.editingDescription = true; // Keeps track of whether group description is being edited
+            this.descriptionDraft = this.group.description; // The content of our current "draft" while being edited
+        },
+        stopEditingDescription() {
+            /**
+             * Disables edit mode on the group description.
+             */
+            this.editingDescription = false;
+            this.descriptionDraft = this.group.description;
+        },
+        submitEditDescription() {
+            /**
+             * Updates group description to have the submitted draft content.
+             */
+            if (this.group.description === this.descriptionDraft) {
+                const error = 'Error: Edited description content should be different than current description content.';
+                this.$set(this.alerts, error, 'error'); // Set an alert to be the error text, timeout of 3000 ms
+                setTimeout(() => this.$delete(this.alerts, error), 3000);
+                return;
+            }
+
+            const params = {
+                method: 'PUT',
+                message: 'Successfully edited description!',
+                body: JSON.stringify({ description: this.descriptionDraft }),
+                callback: () => {
+                    this.editingDescription = false;
+                    this.$set(this.alerts, params.message, 'success');
+                    setTimeout(() => this.$delete(this.alerts, params.message), 3000);
+                    this.$emit('refreshGroup');
+                }
+            };
+            this.request(params);
+        },
+        startEditingName() {
+            /**
+             * Enables edit mode on the group name.
+             */
+            this.editingName = true; // Keeps track of whether group name is being edited
+            this.nameDraft = this.group.name; // The content of our current "draft" while being edited
+        },
+        stopEditingName() {
+            /**
+             * Disables edit mode on the group name.
+             */
+            this.editingName = false;
+            this.nameDraft = this.group.name;
+        },
+        submitEditName() {
+            /**
+             * Updates group description to have the submitted draft content.
+             */
+            if (this.group.name === this.nameDraft) {
+                const error = 'Error: Edited name should be different than current group name.';
+                this.$set(this.alerts, error, 'error'); // Set an alert to be the error text, timeout of 3000 ms
+                setTimeout(() => this.$delete(this.alerts, error), 3000);
+                return;
+            }
+
+            const params = {
+                method: 'PUT',
+                message: 'Successfully edited description!',
+                body: JSON.stringify({ name: this.nameDraft }),
+                callback: () => {
+                    this.editingName = false;
+                    this.$set(this.alerts, params.message, 'success');
+                    setTimeout(() => this.$delete(this.alerts, params.message), 3000);
+                    this.$emit('refreshGroup');
+                }
+            };
+            this.request(params);
+        },
         deleteGroup() {
             /**
              * Deletes this group.
@@ -41,7 +165,7 @@ export default {
                     });
                 }
             };
-            
+
             this.request(params);
         },
         transferOwnership(username) {
@@ -50,14 +174,14 @@ export default {
              */
             const params = {
                 method: 'PUT',
-                body: JSON.stringify({content: this.username}),
+                body: JSON.stringify({ content: this.username }),
                 callback: () => {
                     this.$store.commit('alert', {
                         message: 'Successfully deleted group!', status: 'success'
                     });
                 }
             };
-            
+
             this.transferOwnershipRequest(params);
         },
         async request(params) {
@@ -91,8 +215,7 @@ export default {
             }
 
             // redirect if deleting group
-            if (params.method === 'DELETE')
-            {
+            if (params.method === 'DELETE') {
                 this.$router.push('/groups');
             }
         },
@@ -161,6 +284,19 @@ export default {
 </script>
   
 <style scoped>
+.owner-component {
+    padding-bottom: 1em;
+    border-bottom: 2px solid #0D0D0D;
+}
 
+.actions {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+}
+
+.delete {
+    color: red;
+}
 </style>
   

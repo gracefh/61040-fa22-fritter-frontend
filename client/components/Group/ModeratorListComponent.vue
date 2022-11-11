@@ -6,12 +6,11 @@
             <h3>Moderators</h3>
         </header>
         <ul class="moderator-list">
-            <div v-for="user in moderators">
+            <li v-for="user in moderators">
                 {{ user.username }}
-            </div>
+            </li>
         </ul>
     </aside>
-
 </template>
   
 <script>
@@ -28,6 +27,14 @@ export default {
 </script>
   
 <style scoped>
+ul {
+    list-style-type: none;
+    padding-left:0;
+}
 
+aside {
+    padding:1em;
+    border-bottom: 2px solid #0D0D0D;
+}
 </style>
   

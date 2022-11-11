@@ -157,10 +157,11 @@ router.post(
  * @throws {403} - if the user is not logged in
  * @throws {404} - if the group Id does not exist
  * @throws {409} - If the user is not a member of the group
+ * @throws {409} - If the user is the owner of the group (owners cannot leave)
  */
 router.delete(
   "/:groupId?/member",
-  [userValidator.isUserLoggedIn, groupValidator.doesGroupParamExist, groupValidator.isUserInGroup],
+  [userValidator.isUserLoggedIn, groupValidator.doesGroupParamExist, groupValidator.isUserInGroup, groupValidator.isUserNotOwner],
   async (req: Request, res: Response) => {
     const userId = (req.session.userId as string) ?? ""; // Will not be an empty string since it's validated in isUserLoggedIn
     const group = await GroupCollection.findOneByGroupId(req.params.groupId);
