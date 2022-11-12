@@ -126,7 +126,7 @@ export default {
         const r = await fetch(`/api/freets/${this.freet._id}`, options);
         if (!r.ok) {
           const res = await r.json();
-          throw new Error(Object.keys(res.error).reduce((result, key) => `${result}\n${key}: ${res.error[key]}`, ""));
+          throw new Error(JSON.stringify(res.error));
         }
 
         this.editing = false;

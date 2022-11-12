@@ -67,7 +67,7 @@ const isGroupNameNotAlreadyInUse = async (
   res: Response,
   next: NextFunction
 ) => {
-  const group = await GroupCollection.findOneByGroupName(req.body.groupname);
+  const group = await GroupCollection.findOneByGroupName(req.body.name);
 
   if (!group) {
     next();

@@ -17,18 +17,20 @@
                 </section>
                 <section class="freets" v-if="group.freets.length > 0">
                     <GroupFreetComponent v-for="freet in reverseFreets" :key="freet.id" :groupId="groupId"
-                        :freet="freet" :showModeratorFunctions="role === 'owner' || role === 'moderator'"
-                        @refreshGroup="refreshGroup" />
+                        :freet="freet" :showModeratorFunctions="isModerator" @refreshGroup="refreshGroup" />
                 </section>
             </section>
             <section class="sidebar">
-                <OwnerComponent v-if="role === 'owner'" class="ownerActions" :group="group" :groupId="groupId"
+                <OwnerComponent v-if="isOwner" class="ownerActions" :group="group" :groupId="groupId"
                     @refreshGroup="refreshGroup" />
-                <MemberListComponent :members="group.members" :groupId="groupId" :showOwnerFunctions="role === 'owner'"
-                    :showModeratorFunctions="role === 'owner' || role === 'moderator'" :moderators="group.moderators"
+                <MemberListComponent :members="group.members" :groupId="groupId" :showOwnerFunctions="isOwner"
+                    :showModeratorFunctions="isModerator" :moderators="group.moderators" @refreshGroup="refreshGroup" />
+                <ModeratorListComponent :moderators="group.moderators" :groupId="groupId" :showOwnerFunctions="isOwner"
                     @refreshGroup="refreshGroup" />
-                <ModeratorListComponent :moderators="group.moderators" :groupId="groupId"
-                    :showOwnerFunctions="role === 'owner'" @refreshGroup="refreshGroup"/>
+                <section class="information">
+                    <ModeratorInformationComponent v-if="isModerator" />
+                    <OwnerInformationComponent v-if="isOwner" />
+                </section>
             </section>
         </section>
         <section class="alerts">
@@ -47,10 +49,12 @@ import ModeratorListComponent from '@/components/Group/ModeratorListComponent.vu
 import OwnerComponent from '@/components/Group/OwnerComponent.vue';
 import MemberComponent from '@/components/Group/MemberComponent.vue';
 import CreateGroupFreetForm from '@/components/Group/CreateGroupFreetForm.vue';
+import ModeratorInformationComponent from "@/components/Group/ModeratorInformationComponent.vue";
+import OwnerInformationComponent from "@/components/Group/OwnerInformationComponent.vue";
 
 export default {
     name: 'GroupPage',
-    components: { GroupFreetComponent, MemberListComponent, OwnerComponent, MemberComponent, ModeratorListComponent, CreateGroupFreetForm },
+    components: { GroupFreetComponent, MemberListComponent, OwnerComponent, MemberComponent, ModeratorListComponent, CreateGroupFreetForm, ModeratorInformationComponent, OwnerInformationComponent },
     props: {
         groupId: {
             type: String,
@@ -70,6 +74,12 @@ export default {
     computed: {
         reverseFreets: function () {
             return this.group.freets.slice().reverse();
+        },
+        isOwner: function () {
+            return this.role === 'owner';
+        },
+        isModerator: function () {
+            return this.role === 'moderator' || this.role === 'owner';
         }
     },
     async beforeRouteEnter(to, from, next) {
@@ -119,7 +129,7 @@ export default {
                 const r = await fetch(`/api/groups/${this.groups._id}`, options);
                 if (!r.ok) {
                     const res = await r.json();
-                    throw new Error(Object.keys(res.error).reduce((result, key) => `${result}\n${key}: ${res.error[key]}`, ""));
+                    throw new Error(JSON.stringify(res.error));
                 }
 
                 this.$store.commit('refreshGroups');
@@ -183,6 +193,13 @@ export default {
 
 .createGroupFreetForm {
     width: 60vw;
+}
+
+.information {
+    padding-top: 1em;
+    display:flex;
+    flex-direction:column;
+    gap: 1em;
 }
 </style>
   

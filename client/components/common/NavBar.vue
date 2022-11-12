@@ -10,20 +10,6 @@
           <h1 class="title">Fritter</h1>
         </router-link>
     </div>
-    <!-- <div class="right">
-      <router-link to="/">
-        Home
-      </router-link>
-      <router-link to="/groups">
-        Groups
-      </router-link>
-      <router-link v-if="$store.state.username" to="/account">
-        Account
-      </router-link>
-      <router-link v-else to="/login">
-        Login
-      </router-link>
-    </div> -->
     <section class="alerts">
       <article v-for="(status, alert, index) in $store.state.alerts" :key="index" :class="status">
         <p>{{ alert }}</p>

@@ -16,7 +16,7 @@ export default {
         const r = await fetch(url);
         const res = await r.json();
         if (!r.ok) {
-          throw new Error(res.error);
+          throw new Error(JSON.stringify(res.error));
         }
 
         this.$store.commit('updateFilter', this.value);

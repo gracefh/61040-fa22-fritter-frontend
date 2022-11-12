@@ -202,7 +202,7 @@ export default {
                 const r = await fetch(`/api/owner/groups/${this.groupId}`, options);
                 if (!r.ok) {
                     const res = await r.json();
-                    throw new Error(res.error);
+                    throw new Error(JSON.stringify(res.error));
                 }
 
                 this.editing = false;

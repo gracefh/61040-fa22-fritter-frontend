@@ -82,7 +82,7 @@ export default {
                 const r = await fetch(`/api/groups/${this.groupId}/member`, options);
                 if (!r.ok) {
                     const res = await r.json();
-                    throw new Error(res.error);
+                    throw new Error(JSON.stringify(res.error));
                 }
 
                 this.editing = false;
