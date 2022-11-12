@@ -3,15 +3,10 @@
 <template>
   <section>
     <section class="main-info">
-      <aside class="moderatorFunctions" v-if="showModeratorFunctions && freet.author !== $store.state.username">
+      <aside class="moderatorFunctions" v-if="showModeratorFunctions">
         <FreetModerationComponent ref="moderator" @refreshGroup="refreshGroup" :groupId="groupId" :freet="freet" />
       </aside>
       <FreetComponent ref="freet" @changedFreet="$emit('refreshGroup')" class="freet" :freet="freet" />
-    </section>
-    <section class="alerts">
-      <article v-for="(status, alert, index) in alerts" :key="index" :class="status">
-        <p>{{ alert }}</p>
-      </article>
     </section>
   </section>
 </template>
@@ -46,7 +41,6 @@ export default {
   methods: {
     refreshGroup() {
       this.$emit('refreshGroup');
-      this.alerts = this.$refs.moderator.alerts;
     }
 
   }

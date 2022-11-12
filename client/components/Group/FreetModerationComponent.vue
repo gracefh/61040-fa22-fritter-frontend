@@ -2,12 +2,24 @@
 
 <template>
     <aside>
-        <button @click="removeFreet">
-            Remove Freet
+        <section v-if="showDeletionDialogue" class="deletion-dialogue">
+            <p>Are you sure you want to remove the freet?</p>
+            <div class="options">
+                <button @click="showDeletionDialogue = false">
+                    <i class="fa fa-solid fa-x"></i> No
+                </button>
+                <button @click="removeFreet" class="delete">
+                    <i class="fa fa-regular fa-trash-can"></i> Yes
+                </button>
+            </div>
+        </section>
+        <button v-else @click="showDeletionDialogue = true" class="main-button delete">
+            <i class="fa-regular fa-trash-can"></i> Remove Freet From Group
         </button>
     </aside>
 </template>
   
+
 <script>
 
 export default {
@@ -24,7 +36,7 @@ export default {
     },
     data() {
         return {
-            alerts: []
+            showDeletionDialogue: false
         }
     },
     methods: {
@@ -37,7 +49,7 @@ export default {
                 callback: () => {
                     this.$emit('refreshGroup');
                     this.$store.commit('alert', {
-                        message: 'Successfully removed freet', status: 'success'
+                        message: 'Successfully removed freet from group', status: 'success'
                     });
                 }
             };
@@ -81,10 +93,8 @@ export default {
 
                 if (!r.ok) {
                     const res = await r.json();
-                    console.log(res);
-                    throw new Error(res.error);
+                    throw new Error(Object.keys(res.error).reduce((result, key) => `${result}\n${key}: ${res.error[key]}`, ""));
                 }
-
                 this.editing = false;
                 this.$store.commit('refreshGroups');
 
@@ -99,8 +109,31 @@ export default {
 </script>
   
 <style scoped>
-button {
-    color: red;
+.main-button {
+    margin-top:1em;
+    margin-right:1em;
+}
+.delete {
+    color: #cf0000;
+}
+
+.deletion-dialogue {
+    padding:1em;
+    background-color: #F2E7DC;
+    opacity:.8;
+    
+}
+
+.deletion-dialogue > p {
+    margin:0;
+    padding-bottom:.2em;
+}
+
+.options {
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:1em;
 }
 </style>
   

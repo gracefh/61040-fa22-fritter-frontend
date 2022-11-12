@@ -8,7 +8,7 @@
                     <h2 class="group-name">
                         {{ group.name }}
                     </h2>
-                    <div>Description: {{ group.description }}</div>
+                    <div class="group-description">{{ group.description }}</div>
                     <MemberComponent :groupId="groupId" :role="role" />
                 </header>
                 <section v-if="role !== 'notJoined'">
@@ -24,10 +24,11 @@
             <section class="sidebar">
                 <OwnerComponent v-if="role === 'owner'" class="ownerActions" :group="group" :groupId="groupId"
                     @refreshGroup="refreshGroup" />
-                <MemberListComponent :members="group.members" :groupId="groupId"
+                <MemberListComponent :members="group.members" :groupId="groupId" :showOwnerFunctions="role === 'owner'"
                     :showModeratorFunctions="role === 'owner' || role === 'moderator'" :moderators="group.moderators"
                     @refreshGroup="refreshGroup" />
-                <ModeratorListComponent :moderators="group.moderators" />
+                <ModeratorListComponent :moderators="group.moderators" :groupId="groupId"
+                    :showOwnerFunctions="role === 'owner'" @refreshGroup="refreshGroup"/>
             </section>
         </section>
         <section class="alerts">
@@ -93,10 +94,10 @@ export default {
             if (this.group.owner.username === this.$store.state.username) {
                 this.role = 'owner';
             }
-            else if (this.$store.state.username in this.group.moderators.map((moderator) => moderator.username)) {
+            else if (this.group.moderators.some((moderator) => moderator.username === this.$store.state.username)) {
                 this.role = 'moderator';
             }
-            else if (this.$store.state.username in this.group.members.map((member) => member.username)) {
+            else if (this.group.members.some((member) => member.username === this.$store.state.username)) {
                 this.role = 'member';
             }
         },
@@ -118,10 +119,9 @@ export default {
                 const r = await fetch(`/api/groups/${this.groups._id}`, options);
                 if (!r.ok) {
                     const res = await r.json();
-                    throw new Error(res.error);
+                    throw new Error(Object.keys(res.error).reduce((result, key) => `${result}\n${key}: ${res.error[key]}`, ""));
                 }
 
-                this.editing = false;
                 this.$store.commit('refreshGroups');
 
                 params.callback();
@@ -149,7 +149,7 @@ export default {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    /* width: 65vw; */
+    padding-bottom: 1em;
 }
 
 .group-overall {
@@ -174,9 +174,12 @@ export default {
 }
 
 .group-name {
-    padding-bottom: 0;
+    margin-bottom: .1em;
 }
 
+.group-description {
+    font-size: 18px;
+}
 
 .createGroupFreetForm {
     width: 60vw;

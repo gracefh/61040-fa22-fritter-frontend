@@ -43,12 +43,12 @@ export default {
                 }
             };
 
-            const path = `/api/moderation/groups/${this.groupId}/users/${this.freet.authorId}`;
+            const path = `/api/moderation/groups/${this.groupId}/users/${this.userId}`;
             this.request(path, params);
         },
         async request(path, params) {
             /**
-             * Submits a request to the owner's endpoint
+             * Submits a request to the moderator's endpoint
              * @param params - Options for the request
              * @param params.body - Body for the request, if it exists
              * @param params.callback - Function to run if the the request succeeds
@@ -65,11 +65,9 @@ export default {
 
                 if (!r.ok) {
                     const res = await r.json();
-                    console.log(res);
-                    throw new Error(res.error);
+                    throw new Error(Object.keys(res.error).reduce((result, key) => `${result}\n${key}: ${res.error[key]}`, ""));
                 }
 
-                this.editing = false;
                 this.$store.commit('refreshGroups');
 
                 params.callback();
@@ -84,7 +82,7 @@ export default {
   
 <style scoped>
 button {
-    color: #730202;
+    color: #cf0000;
 }
 </style>
   

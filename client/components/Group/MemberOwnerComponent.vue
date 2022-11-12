@@ -1,72 +1,78 @@
-<!-- Show member functionalities of a group -->
+<!-- Show owner functionalities for each member -->
 
 <template>
     <aside>
-        <button v-if="role === 'notJoined'" @click="joinGroup">
-            <i class="fa fa-solid fa-arrow-right-to-bracket"></i> Join Group
+        <button v-if="!isUserModerator" @click="makeModerator">
+            Make User Moderator
         </button>
-        <button v-else-if="role !== 'owner'" @click="leaveGroup">
-            <i class="fa fa-solid fa-arrow-right-from-bracket"></i> Leave Group
+        <button @click="transferGroupOwnership">
+            Transfer Group Ownership
         </button>
     </aside>
-
 </template>
   
 <script>
 
 export default {
-    name: 'MemberComponent',
+    name: 'MemberOwnerComponent',
     props: {
         groupId: {
             type: String,
             required: true
         },
-        role: {
+        userId: {
             type: String,
+            required: true
+        },
+        isUserModerator: {
+            type: Boolean,
             required: true
         }
     },
     data() {
-        const role = this.role !== 'notJoined';
         return {
-            isMember: role
-        };
+            alerts: []
+        }
     },
     methods: {
-        joinGroup() {
+        makeModerator() {
             /**
-             * joins this group.
+             * make user moderator of group
              */
             const params = {
                 method: 'POST',
+                body: JSON.stringify({ userId: this.userId }),
                 callback: () => {
+                    this.$emit('refreshGroup');
                     this.$store.commit('alert', {
-                        message: 'Successfully joined group', status: 'success'
+                        message: 'Successfully added user as moderator in group', status: 'success'
                     });
                 }
             };
-            
-            // memberStatus = true;
-            this.request(params);
-        },
-        leaveGroup() {
+
+            const path = `/api/owner/groups/${this.groupId}/moderators`;
+            this.request(path, params);
+        }, transferGroupOwnership() {
             /**
-             * leaves this group.
+             * transfer ownership of group to another user
              */
             const params = {
-                method: 'DELETE',
+                method: 'PUT',
+                body: JSON.stringify({ userId: this.userId }),
                 callback: () => {
+                    this.$emit('refreshGroup');
                     this.$store.commit('alert', {
-                        message: 'Successfully left group', status: 'success'
+                        message: 'Successfully transferred group ownership to user', status: 'success'
                     });
                 }
             };
-            
-            this.request(params);
+
+            const path = `/api/owner/groups/${this.groupId}/newOwner`;
+            this.request(path, params);
         },
-        async request(params) {
+        async request(path, params) {
             /**
-             * Submits a request to the owner's endpoint
+             * Submits a request to the moderator's endpoint
              * @param params - Options for the request
              * @param params.body - Body for the request, if it exists
              * @param params.callback - Function to run if the the request succeeds
@@ -79,13 +85,13 @@ export default {
             }
 
             try {
-                const r = await fetch(`/api/groups/${this.groupId}/member`, options);
+                const r = await fetch(path, options);
+
                 if (!r.ok) {
                     const res = await r.json();
-                    throw new Error(res.error);
+                    throw new Error(Object.keys(res.error).reduce((result, key) => `${result}\n${key}: ${res.error[key]}`, ""));
                 }
 
-                this.editing = false;
                 this.$store.commit('refreshGroups');
 
                 params.callback();
@@ -93,13 +99,7 @@ export default {
                 this.$set(this.alerts, e, 'error');
                 setTimeout(() => this.$delete(this.alerts, e), 3000);
             }
-
         }
     }
 };
 </script>
-  
-<style scoped>
-
-</style>
-  

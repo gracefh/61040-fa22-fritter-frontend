@@ -34,11 +34,11 @@
                 <section v-if="showDeletionDialogue">
                     <p>Are you sure you want to delete the group?</p>
                     <div style="display:flex; justify-content:space-around">
-                        <button @click="deleteGroup" class="delete">
-                            <i class="fa fa-regular fa-trash-can"></i> Yes
-                        </button>
                         <button @click="showDeletionDialogue = false">
                             <i class="fa fa-solid fa-x"></i> No
+                        </button>
+                        <button @click="deleteGroup" class="delete">
+                            <i class="fa fa-regular fa-trash-can"></i> Yes
                         </button>
                     </div>
                 </section>
@@ -296,7 +296,7 @@ export default {
 }
 
 .delete {
-    color: red;
+    color: #cf0000;
 }
 </style>
   

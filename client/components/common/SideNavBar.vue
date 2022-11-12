@@ -14,11 +14,6 @@
         <router-link v-else to="/login">
             Login
         </router-link>
-        <section class="alerts">
-            <article v-for="(status, alert, index) in $store.state.alerts" :key="index" :class="status">
-                <p>{{ alert }}</p>
-            </article>
-        </section>
     </nav>
 </template>
   
@@ -38,7 +33,7 @@ nav {
 
 nav a {
     padding: 0 5px;
-    font-size: 20px;
+    font-size: 25px;
     font-weight:600;
 }
 

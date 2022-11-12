@@ -3,22 +3,13 @@
 
 <template>
   <form @submit.prevent="submit">
-    <input
-      v-model="value"
-      type="text"
-      :placeholder="placeholder"
-    >
-    <button
-      type="submit"
-    >
-      {{ button }}
+    <i class='fa fa-solid fa-magnifying-glass'></i>
+    <input v-model="value" type="text" :placeholder="placeholder">
+    <button type="submit">
+      <slot>Submit</slot>
     </button>
     <section class="alerts">
-      <article
-        v-for="(status, alert, index) in alerts"
-        :key="index"
-        :class="status"
-      >
+      <article v-for="(status, alert, index) in alerts" :key="index" :class="status">
         <p>{{ alert }}</p>
       </article>
     </section>
@@ -32,26 +23,28 @@ export default {
     placeholder: {
       type: String,
       default: ''
-    },
-    button: {
-      type: String,
-      default: 'Submit'
     }
   },
   data() {
-    return {value: '', alerts: {}};
+    return { value: '', alerts: {} };
   }
 };
 </script>
 
 <style scoped>
 form {
-    display: flex;
-    position: relative;
+  display: flex;
+  position: relative;
+  align-items: stretch;
+  gap: .2em;
+}
+
+.fa-magnifying-glass {
+  align-self: center;
 }
 
 input {
-    padding: 0 5px;
-    min-width: 200px;
+  padding: 0 5px;
+  min-width: 200px;
 }
 </style>

@@ -6,6 +6,34 @@
             <header>
                 <h2>Welcome @{{ $store.state.username }}</h2>
             </header>
+            <section>
+                <CreateGroupForm @refreshGroups="setData" ref="createGroupForm" />
+                <section v-if="$store.state.groups.length" class="groups-list">
+                    <section v-if="this.ownedGroups.length > 0">
+                        <h2>Groups You Own</h2>
+                        <GroupsComponent v-for="group in this.ownedGroups" :key="group.id" :group="group"
+                            :role="'owner'" />
+                    </section>
+                    <section v-if="this.moderatedGroups.length > 0">
+                        <h2>Groups You Moderate</h2>
+                        <GroupsComponent v-for="group in this.moderatedGroups" :key="group.id" :group="group"
+                            :role="'moderator'" />
+                    </section>
+                    <section v-if="this.memberedGroups.length > 0">
+                        <h2>Other Groups You're In</h2>
+                        <GroupsComponent v-for="group in this.memberedGroups" :key="group.id" :group="group"
+                            :role="'member'" />
+                    </section>
+                    <section v-if="this.otherGroups.length > 0">
+                        <h2>Other Groups</h2>
+                        <GroupsComponent v-for="group in this.otherGroups" :key="group.id" :group="group"
+                            :role="'notJoined'" />
+                    </section>
+                </section>
+                <section v-else>
+                    <h3>No groups found.</h3>
+                </section>
+            </section>
         </section>
         <section v-else>
             <header>
@@ -13,51 +41,23 @@
             </header>
             <article>
                 <h3>
-                    <router-link to="/login">
+                    <router-link class='sign-in' to="/login">
                         Sign in
                     </router-link>
-                    to create, join, and leave groups.
+                    to see, create, and join groups.
                 </h3>
             </article>
-        </section>
-        <section>
-            <CreateGroupForm @refreshGroups="setData" ref="createGroupForm" />
-            <section v-if="$store.state.groups.length" class="groups-list">
-                <section v-if="this.ownedGroups.length > 0">
-                    <h2>Groups You Own</h2>
-                    <GroupsComponent v-for="group in this.ownedGroups" :key="group.id" :group="group" :role="'owner'" />
-                </section>
-                <section v-if="this.moderatedGroups.length > 0">
-                    <h2>Groups You Moderate</h2>
-                    <GroupsComponent v-for="group in this.moderatedGroups" :key="group.id" :group="group"
-                        :role="'moderator'" />
-                </section>
-                <section v-if="this.memberedGroups.length > 0">
-                    <h2>Other Groups You're In</h2>
-                    <GroupsComponent v-for="group in this.memberedGroups" :key="group.id" :group="group"
-                        :role="'member'" />
-                </section>
-                <section v-if="this.otherGroups.length > 0">
-                    <h2>Other Groups</h2>
-                    <GroupsComponent v-for="group in this.otherGroups" :key="group.id" :group="group"
-                        :role="'notJoined'" />
-                </section>
-            </section>
-            <section v-else>
-                <h3>No groups found.</h3>
-            </section>
         </section>
     </main>
 </template>
   
 <script>
 import GroupsComponent from '@/components/Groups/GroupsComponent.vue';
-import GetGroupsForm from '@/components/Groups/GetGroupsForm.vue';
 import CreateGroupForm from '@/components/Groups/CreateGroupForm.vue';
 
 export default {
     name: 'AllGroupsPage',
-    components: { GroupsComponent, GetGroupsForm, CreateGroupForm },
+    components: { GroupsComponent, CreateGroupForm },
     data() {
         return {
             ownedGroups: [],
@@ -109,7 +109,7 @@ export default {
                 const r = await fetch(`/api/groups/${this.groups._id}`, options);
                 if (!r.ok) {
                     const res = await r.json();
-                    throw new Error(res.error);
+                    throw new Error(Object.keys(res.error).reduce((result, key) => `${result}\n${key}: ${res.error[key]}`, ""));
                 }
 
                 this.editing = false;
@@ -147,6 +147,7 @@ section .scrollbox {
     padding: 3%;
     overflow-y: scroll;
 }
+
 .groups-list {
     width: 70vw;
 }

@@ -13,7 +13,7 @@
       >
         <label :for="field.id">{{ field.label }}:</label>
         <textarea
-          v-if="field.id === 'content'"
+          v-if="field.id === 'content' || field.id === 'description'"
           :name="field.id"
           :value="field.value"
           @input="field.value = $event.target.value"
@@ -91,7 +91,7 @@ export default {
         if (!r.ok) {
           // If response is not okay, we throw an error and enter the catch block
           const res = await r.json();
-          throw new Error(res.error);
+          throw new Error(JSON.stringify(res.error));
         }
 
         if (this.setUsername) {
@@ -122,7 +122,7 @@ export default {
 
 <style scoped>
 form {
-  border: 1px solid #111;
+  border: 1px solid #0D0D0D;
   padding: 1em;
   width:70vw;
   display: flex;

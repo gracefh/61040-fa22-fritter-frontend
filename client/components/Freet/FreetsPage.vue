@@ -14,7 +14,7 @@
       </header>
       <article>
         <h3>
-          <router-link to="/login">
+          <router-link to="/login" class="sign-in">
             Sign in
           </router-link>
           to create, edit, and delete freets.
@@ -32,26 +32,14 @@
           </h2>
         </div>
         <div class="right">
-          <GetFreetsForm
-            ref="getFreetsForm"
-            value="author"
-            placeholder="🔍 Filter by author (optional)"
-            button="🔄 Get freets"
-          />
+          <GetFreetsForm ref="getFreetsForm" value="author" placeholder="Filter by author (optional)"><i
+              class="fa fa-solid fa-arrows-rotate"></i> Get freets</GetFreetsForm>
         </div>
       </header>
-      <section
-        v-if="$store.state.freets.length"
-      >
-        <FreetComponent
-          v-for="freet in $store.state.freets"
-          :key="freet.id"
-          :freet="freet"
-        />
+      <section v-if="$store.state.freets.length">
+        <FreetComponent v-for="freet in $store.state.freets" :key="freet.id" :freet="freet" />
       </section>
-      <article
-        v-else
-      >
+      <article v-else>
         <h3>No freets found.</h3>
       </article>
     </section>
@@ -65,7 +53,7 @@ import GetFreetsForm from '@/components/Freet/GetFreetsForm.vue';
 
 export default {
   name: 'FreetPage',
-  components: {FreetComponent, GetFreetsForm, CreateFreetForm},
+  components: { FreetComponent, GetFreetsForm, CreateFreetForm },
   mounted() {
     this.$refs.getFreetsForm.submit();
   }
@@ -79,14 +67,15 @@ section {
   width: 70vw;
 }
 
-header, header > * {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+header,
+header>* {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 button {
-    margin-right: 10px;
+  margin-right: 10px;
 }
 
 section .scrollbox {
