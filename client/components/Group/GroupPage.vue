@@ -9,7 +9,7 @@
                         {{ group.name }}
                     </h2>
                     <div class="group-description">{{ group.description }}</div>
-                    <MemberComponent :groupId="groupId" :role="role" @refreshGroup="refreshGroup"/>
+                    <MemberComponent :groupId="groupId" :role="role" @refreshGroup="refreshGroup" />
                 </header>
                 <section v-if="role !== 'notJoined'">
                     <CreateGroupFreetForm class="createGroupFreetForm" @refreshGroup="refreshGroup"
@@ -110,6 +110,9 @@ export default {
             else if (this.group.members.some((member) => member.username === this.$store.state.username)) {
                 this.role = 'member';
             }
+            else {
+                this.role = 'notJoined';
+            }
         },
         async request(params) {
             /**
@@ -197,8 +200,8 @@ export default {
 
 .information {
     padding-top: 1em;
-    display:flex;
-    flex-direction:column;
+    display: flex;
+    flex-direction: column;
     gap: 1em;
 }
 </style>

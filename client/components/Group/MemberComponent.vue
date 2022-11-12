@@ -5,7 +5,7 @@
         <button v-if="role === 'notJoined' && $store.state.username" @click="joinGroup">
             <i class="fa fa-solid fa-arrow-right-to-bracket"></i> Join Group
         </button>
-        <button v-else-if="role !== 'owner'" @click="leaveGroup">
+        <button v-else-if="role !== 'owner' && $store.state.username" @click="leaveGroup">
             <i class="fa fa-solid fa-arrow-right-from-bracket"></i> Leave Group
         </button>
     </aside>
@@ -40,7 +40,7 @@ export default {
                     });
                 }
             };
-            
+
             this.request(params);
         },
         leaveGroup() {
@@ -49,14 +49,13 @@ export default {
              */
             const params = {
                 method: 'DELETE',
-                this.$emit('refreshGroup');
                 callback: () => {
+                    this.$emit('refreshGroup');
                     this.$store.commit('alert', {
                         message: 'Successfully left group', status: 'success'
                     });
                 }
             };
-            
             this.request(params);
         },
         async request(params) {
