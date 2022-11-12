@@ -9,7 +9,7 @@
                         {{ group.name }}
                     </h2>
                     <div class="group-description">{{ group.description }}</div>
-                    <MemberComponent :groupId="groupId" :role="role" />
+                    <MemberComponent :groupId="groupId" :role="role" @refreshGroup="refreshGroup"/>
                 </header>
                 <section v-if="role !== 'notJoined'">
                     <CreateGroupFreetForm class="createGroupFreetForm" @refreshGroup="refreshGroup"

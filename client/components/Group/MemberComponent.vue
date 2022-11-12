@@ -26,12 +26,6 @@ export default {
             required: true
         }
     },
-    data() {
-        const role = this.role !== 'notJoined';
-        return {
-            isMember: role
-        };
-    },
     methods: {
         joinGroup() {
             /**
@@ -40,13 +34,13 @@ export default {
             const params = {
                 method: 'POST',
                 callback: () => {
+                    this.$emit('refreshGroup');
                     this.$store.commit('alert', {
                         message: 'Successfully joined group', status: 'success'
                     });
                 }
             };
             
-            // memberStatus = true;
             this.request(params);
         },
         leaveGroup() {
@@ -55,6 +49,7 @@ export default {
              */
             const params = {
                 method: 'DELETE',
+                this.$emit('refreshGroup');
                 callback: () => {
                     this.$store.commit('alert', {
                         message: 'Successfully left group', status: 'success'
