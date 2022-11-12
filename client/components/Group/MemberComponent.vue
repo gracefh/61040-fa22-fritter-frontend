@@ -2,7 +2,7 @@
 
 <template>
     <aside>
-        <button v-if="role === 'notJoined'" @click="joinGroup">
+        <button v-if="role === 'notJoined' && $store.state.username" @click="joinGroup">
             <i class="fa fa-solid fa-arrow-right-to-bracket"></i> Join Group
         </button>
         <button v-else-if="role !== 'owner'" @click="leaveGroup">
